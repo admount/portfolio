@@ -6,7 +6,7 @@ Several of these were completed as part of the [Workout Wednesday](https://www.w
 
 ## Contents
 
-Each file is a standalone `.pbix` report focused on a specific data scenario or visualization technique. Topics covered include:
+Each file is a standalone `.pbix` report focused on a specific data scenario and set of visualization techniques. Topics covered include:
 
 - Connecting and modeling data
 - Creating Basic KPI Reports
