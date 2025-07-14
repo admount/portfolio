@@ -13,6 +13,8 @@ Each file is a standalone `.pbix` report focused on a specific data scenario and
 - Interactive filtering with slicers
 - Drilling down
 - Drilling through
+- Conditional formatting
 - Designing for accessibility and readability
+
 
 Feel free to explore, download, or adapt the reports.
