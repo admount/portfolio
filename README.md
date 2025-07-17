@@ -15,6 +15,7 @@ Each file is a standalone `.pbix` report focused on a specific data scenario and
 - Drilling through
 - Conditional formatting
 - Designing for accessibility and readability
+- Custom functions
 
 
 Feel free to explore, download, or adapt the reports.
