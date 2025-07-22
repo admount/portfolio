@@ -10,6 +10,7 @@ Each file is a standalone `.pbix` report focused on a specific data scenario and
 
 - Connecting and modeling data
 - Creating Basic KPI Reports
+- Forecasting and smart insights
 - Interactive filtering with slicers
 - Drilling down
 - Drilling through
