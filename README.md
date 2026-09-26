@@ -25,3 +25,4 @@ Feel free to explore, download, or adapt the reports.
 
 - [The Glory Paladin vs. the Opal Dragon](paladin-dragon/) – a three.js 3D animation of an orc paladin under a *Fly* spell fighting an opalescent dragon with a shadow longsword ([video](videos/paladin-vs-opal-dragon.mp4)).
 - [The Warhorse vs. the Opal Dragon](warhorse-dragon/) – the paladin's warhorse stands up on his hind legs and fights the same dragon ([video](videos/warhorse-vs-opal-dragon.mp4)).
+- [The Warhorse vs. the Opal Dragon, 2D anime short](warhorse-anime/) – a 46-second 2D animated version with an original synthesized score ([video](videos/warhorse-anime.mp4)).
