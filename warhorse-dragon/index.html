@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
-<title>Paladin vs. Dragon</title>
+<title>Warhorse vs. Dragon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Alegreya+Sans:wght@400;500;700&display=swap">
@@ -139,17 +139,17 @@
   }
 </style>
 
-<div id="stage" aria-label="3D animation of an orc paladin fighting an opalescent dragon"></div>
+<div id="stage" aria-label="3D animation of a black warhorse standing on its hind legs and fighting an opalescent dragon"></div>
 
 <header class="hud hud-top">
-  <p class="eyebrow">Orc paladin · Oath of Glory · <b>Fly</b> · <i>Shadow longsword</i></p>
-  <h1>The Glory Paladin <span>vs.</span> the Opal Dragon</h1>
+  <p class="eyebrow">The paladin's warhorse · <b>Off duty</b> · <i>Very much on two legs</i></p>
+  <h1>The Warhorse <span>vs.</span> the Opal Dragon</h1>
 </header>
 
 <section class="hud hud-bottom">
   <div class="caption" id="caption">
-    <p class="beat" id="beatName">Flight</p>
-    <p class="beat-line" id="beatLine">The Fly spell takes hold. He lifts off above the village rooftops as the opal dragon circles in.</p>
+    <p class="beat" id="beatName">Rude Awakening</p>
+    <p class="beat-line" id="beatLine">A dragon lands in his pasture. He looks up from the grass, then stands up on his hind legs.</p>
   </div>
   <div class="controls">
     <button id="playBtn" type="button">Pause</button>
@@ -401,121 +401,20 @@
     for (let i = 0; i < n; i++) sys.spawn(at, randDir(tmpV).multiplyScalar(speed * rnd(0.3, 1)), life * rnd(0.6, 1.2), s0, s1, c0, c1, drag, 0);
   }
 
-  // ---------- the paladin ----------
-  function makePaladin() {
-    const steel = new THREE.MeshStandardMaterial({ color: 0xb4bac2, metalness: 0.55, roughness: 0.32 });
-    const steelDS = steel.clone(); steelDS.side = THREE.DoubleSide;
-    const steelDark = new THREE.MeshStandardMaterial({ color: 0x5b6068, metalness: 0.5, roughness: 0.4 });
-    const skin = new THREE.MeshStandardMaterial({ color: 0x7a9344, roughness: 0.75 });
-    const skinDark = new THREE.MeshStandardMaterial({ color: 0x5e7433, roughness: 0.8 });
-    const hair = new THREE.MeshStandardMaterial({ color: 0x131313, roughness: 0.9 });
-    const leather = new THREE.MeshStandardMaterial({ color: 0x7d4a25, roughness: 0.75 });
-    const leatherDark = new THREE.MeshStandardMaterial({ color: 0x2c1a10, roughness: 0.8 });
-    const gold = new THREE.MeshStandardMaterial({ color: 0xd8ab45, metalness: 0.6, roughness: 0.3 });
-    const bone = new THREE.MeshStandardMaterial({ color: 0xf0e7d0, roughness: 0.5 });
-    const eyeM = new THREE.MeshStandardMaterial({ color: 0xe8c35a, emissive: 0x9a6410, emissiveIntensity: 0.9 });
 
-    const root = new THREE.Group();
-    const body = new THREE.Group(); body.position.y = 1.29; root.add(body);
-    const upper = new THREE.Group(); body.add(upper);
-    const low = new THREE.Group(); low.scale.z = 0.8; body.add(low);
-    const up = new THREE.Group(); up.scale.z = 0.8; upper.add(up);
 
-    mk(new THREE.CylinderGeometry(0.4, 0.46, 0.42, 16), steel, 0, -0.08, 0, low);
-    mk(new THREE.CylinderGeometry(0.47, 0.5, 0.1, 16), steel, 0, -0.3, 0, low);
-    for (const s of [-1, 1]) { const t = mk(new THREE.BoxGeometry(0.3, 0.34, 0.06), steel, s * 0.2, -0.42, 0.43, low); t.rotation.x = 0.14; }
-    mk(new THREE.CylinderGeometry(0.415, 0.415, 0.11, 16), leather, 0, 0.16, 0, up);
-    mk(new THREE.BoxGeometry(0.18, 0.14, 0.05), gold, 0, 0.16, 0.43, up);
-    mk(new THREE.BoxGeometry(0.08, 0.06, 0.05), leather, 0, 0.16, 0.45, up);
-    mk(new THREE.CylinderGeometry(0.48, 0.4, 0.78, 16), steel, 0, 0.6, 0, up);
-    mk(new THREE.BoxGeometry(0.07, 0.62, 0.12), steel, 0, 0.58, 0.42, up);
-    const strap = mk(new THREE.BoxGeometry(0.09, 1.12, 0.04), leather, 0, 0.58, 0.47, up); strap.rotation.z = -0.72;
-    mk(new THREE.BoxGeometry(0.2, 0.22, 0.05), leatherDark, 0.15, 0.48, 0.46, up);
-    mk(new THREE.CylinderGeometry(0.26, 0.33, 0.2, 14), steel, 0, 1.02, 0, up);
-    const sc = mk(new THREE.CylinderGeometry(0.05, 0.04, 1.15, 8), leatherDark, 0.12, 0.5, -0.44, upper); sc.rotation.z = 0.55;
-
-    for (const s of [-1, 1]) {
-      const p = new THREE.Group(); p.position.set(s * 0.53, 0.92, 0); upper.add(p);
-      mk(new THREE.SphereGeometry(0.3, 16, 10, 0, TAU, 0, Math.PI * 0.55), steelDS, 0, 0, 0, p).scale.set(1.08, 0.85, 1.1);
-      for (let k = 1; k <= 2; k++) mk(new THREE.CylinderGeometry(0.3 - k * 0.012, 0.31 - k * 0.006, 0.09, 16, 1, true), steelDS, 0, -0.02 - k * 0.09, 0, p);
+  // pasture fence
+  {
+    const wood = new THREE.MeshStandardMaterial({ color: 0x6b4a2e, roughness: 0.95 });
+    const R = 17, a0 = 0.15 * Math.PI, a1 = 0.85 * Math.PI, n = 16;
+    let prev = null;
+    for (let i = 0; i <= n; i++) {
+      const a = a0 + (a1 - a0) * i / n, x = Math.cos(a) * R, z = Math.sin(a) * R + 2, y = groundH(x, z);
+      mk(new THREE.BoxGeometry(0.22, 1.5, 0.22), wood, x, y + 0.75, z, scene);
+      const p = V(x, y, z);
+      if (prev) for (const h of [0.6, 1.2]) limb(prev.clone().setY(prev.y + h), p.clone().setY(p.y + h), 0.06, 0.06, wood, scene);
+      prev = p;
     }
-
-    const head = new THREE.Group(); head.position.set(0, 1.28, 0.03); upper.add(head);
-    mk(new THREE.SphereGeometry(0.25, 20, 16), skin, 0, 0, 0, head).scale.set(0.95, 1.05, 1);
-    mk(new THREE.BoxGeometry(0.38, 0.22, 0.3), skin, 0, -0.15, 0.05, head);
-    mk(new THREE.BoxGeometry(0.36, 0.07, 0.1), skinDark, 0, 0.07, 0.19, head);
-    mk(new THREE.BoxGeometry(0.09, 0.1, 0.08), skin, 0, -0.03, 0.25, head);
-    mk(new THREE.SphereGeometry(0.265, 16, 10, 0, TAU, 0, Math.PI * 0.5), hair, 0, 0.02, -0.02, head).scale.set(0.98, 0.95, 1.04);
-    mk(new THREE.SphereGeometry(0.235, 14, 10), hair, 0, -0.03, -0.09, head);
-    {
-      const r = mulberry(3);
-      for (let i = 0; i < 12; i++) {
-        const a = r() * TAU, rr = r() * 0.17;
-        const sp = mk(new THREE.ConeGeometry(0.05, 0.16, 5), hair, Math.sin(a) * rr, 0.22 + (0.17 - rr) * 0.2, Math.cos(a) * rr - 0.05, head);
-        sp.rotation.set(Math.cos(a) * rr * 2.5, 0, -Math.sin(a) * rr * 2.5);
-      }
-    }
-    mk(new THREE.SphereGeometry(0.2, 16, 12), hair, 0, -0.22, 0.12, head).scale.set(1.08, 1.28, 0.75);
-    for (const s of [-1, 1]) {
-      const br = mk(new THREE.BoxGeometry(0.12, 0.035, 0.03), hair, s * 0.09, 0.1, 0.245, head); br.rotation.z = s * 0.28;
-      mk(new THREE.SphereGeometry(0.032, 10, 8), eyeM, s * 0.085, 0.02, 0.225, head);
-      const ear = mk(new THREE.ConeGeometry(0.06, 0.3, 6), skin, s * 0.26, 0.04, -0.01, head); ear.rotation.z = -s * 1.1;
-      const mu = mk(new THREE.BoxGeometry(0.15, 0.045, 0.05), hair, s * 0.07, -0.1, 0.265, head); mu.rotation.z = -s * 0.35;
-      const tu = mk(new THREE.ConeGeometry(0.028, 0.12, 6), bone, s * 0.078, -0.09, 0.285, head); tu.rotation.z = -s * 0.15;
-      mk(new THREE.BoxGeometry(0.06, 0.22, 0.18), hair, s * 0.2, -0.1, 0.04, head);
-    }
-
-    function arm(s) {
-      const sh = new THREE.Group(); sh.position.set(s * 0.56, 0.84, 0); upper.add(sh);
-      mk(new THREE.CylinderGeometry(0.12, 0.11, 0.42, 12), steel, 0, -0.22, 0, sh);
-      mk(new THREE.CylinderGeometry(0.126, 0.126, 0.06, 12), leather, 0, -0.12, 0, sh);
-      mk(new THREE.SphereGeometry(0.12, 12, 10), steel, 0, -0.44, 0, sh);
-      const el = new THREE.Group(); el.position.y = -0.44; sh.add(el);
-      mk(new THREE.CylinderGeometry(0.11, 0.09, 0.38, 12), steel, 0, -0.2, 0, el);
-      const wr = new THREE.Group(); wr.position.y = -0.42; el.add(wr);
-      mk(new THREE.BoxGeometry(0.15, 0.05, 0.17), steel, 0, 0.02, 0, wr);
-      mk(new THREE.BoxGeometry(0.14, 0.17, 0.16), steelDark, 0, -0.07, 0.01, wr);
-      return { sh, el, wr };
-    }
-    const armR = arm(-1), armL = arm(1);
-    function leg(s) {
-      const hip = new THREE.Group(); hip.position.set(s * 0.2, -0.28, 0); body.add(hip);
-      mk(new THREE.CylinderGeometry(0.15, 0.13, 0.46, 12), steel, 0, -0.23, 0, hip);
-      const kn = new THREE.Group(); kn.position.y = -0.47; hip.add(kn);
-      mk(new THREE.SphereGeometry(0.13, 12, 10), steel, 0, 0, 0.02, kn);
-      mk(new THREE.CylinderGeometry(0.12, 0.1, 0.42, 12), steel, 0, -0.22, 0, kn);
-      mk(new THREE.BoxGeometry(0.17, 0.13, 0.32), steelDark, 0, -0.47, 0.07, kn);
-      return { hip, kn };
-    }
-    const legL = leg(1), legR = leg(-1);
-
-    // shadow longsword
-    const sword = new THREE.Group(); sword.position.y = -0.08; sword.rotation.x = Math.PI / 2; armR.wr.add(sword);
-    mk(new THREE.CylinderGeometry(0.032, 0.032, 0.3, 8), leatherDark, 0, 0, 0, sword);
-    mk(new THREE.SphereGeometry(0.056, 10, 8), steelDark, 0, -0.18, 0, sword);
-    mk(new THREE.BoxGeometry(0.46, 0.05, 0.07), steelDark, 0, 0.17, 0, sword);
-    for (const s of [-1, 1]) mk(new THREE.SphereGeometry(0.04, 8, 6), steelDark, s * 0.23, 0.17, 0, sword);
-    const bs = new THREE.Shape();
-    bs.moveTo(-0.056, 0); bs.lineTo(0.056, 0); bs.lineTo(0.046, 1.6); bs.lineTo(0, 1.84); bs.lineTo(-0.046, 1.6); bs.closePath();
-    const bg = new THREE.ExtrudeGeometry(bs, { depth: 0.03, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.01, bevelSegments: 1 });
-    bg.translate(0, 0, -0.015);
-    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x16101f, metalness: 0.6, roughness: 0.2, emissive: 0x3d1784, emissiveIntensity: 0.5 });
-    mk(bg, bladeMat, 0, 0.2, 0, sword);
-    const runeMat = new THREE.MeshBasicMaterial({ color: 0xb893ff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-    for (const s of [-1, 1]) { const r = new THREE.Mesh(new THREE.PlaneGeometry(0.022, 1.42), runeMat); r.position.set(0, 0.95, s * 0.026); sword.add(r); }
-    const haloMat = new THREE.MeshBasicMaterial({ color: 0x6a3cff, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false });
-    const halo = new THREE.Mesh(bg, haloMat); halo.position.y = 0.16; halo.scale.set(2.4, 1.05, 3.5); sword.add(halo);
-    const bladeBase = new THREE.Object3D(); bladeBase.position.y = 0.45; sword.add(bladeBase);
-    const bladeTip = new THREE.Object3D(); bladeTip.position.y = 2.0; sword.add(bladeTip);
-    const swordLight = new THREE.PointLight(0x8a5cff, 1.4, 9, 2); swordLight.position.y = 1.0; sword.add(swordLight);
-
-    // Fly spell aura
-    const auraMat = new THREE.MeshBasicMaterial({ color: 0xa9e6ff, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-    const auraMat2 = auraMat.clone(); auraMat2.opacity = 0.28;
-    const ring1 = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.63, 48), auraMat); ring1.rotation.x = -Math.PI / 2; ring1.position.y = 0.05; root.add(ring1);
-    const ring2 = new THREE.Mesh(new THREE.RingGeometry(0.85, 0.9, 48), auraMat2); ring2.rotation.x = -Math.PI / 2; ring2.position.y = 0.2; root.add(ring2);
-
-    return { root, body, upper, head, armR, armL, legL, legR, sword, bladeMat, runeMat, haloMat, bladeBase, bladeTip, swordLight, auraMat, auraMat2, ring1, ring2, yaw: 0 };
   }
 
   // ---------- opalescent material ----------
@@ -636,24 +535,131 @@
     return { root, body, neck, neckBase, head, jaw, mouth, mouthLight, mouthGlow, glowMat, tail, wings, mats: [mScale, mBelly, mWing], yaw: 0, flash: 0, jolt: 0, flap: 0, jawOpen: 0, roarT: 0 };
   }
 
-  const P = makePaladin(); scene.add(P.root); P.root.position.set(6, 0, 10);
-  const D = makeDragon(); scene.add(D.root); D.root.position.set(22, 14, -4);
-  P.root.traverse((o) => { if (o.isMesh) o.castShadow = true; });
 
-  // ---------- sword trail ribbon ----------
-  const TR = 26;
-  const trPos = new Float32Array(TR * 2 * 3), trA = new Float32Array(TR * 2), trS = new Float32Array(TR);
-  const trGeo = new THREE.BufferGeometry();
-  const trPosAttr = new THREE.BufferAttribute(trPos, 3), trAAttr = new THREE.BufferAttribute(trA, 1);
-  trGeo.setAttribute("position", trPosAttr); trGeo.setAttribute("alpha", trAAttr);
-  { const idx = []; for (let i = 0; i < TR - 1; i++) { const a = 2 * i, b = a + 1, c = a + 2, d = a + 3; idx.push(a, b, c, b, d, c); } trGeo.setIndex(idx); }
-  const trVS = "attribute float alpha; varying float vA; void main(){ vA = alpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }";
-  const trFS = "uniform vec3 uColor; uniform float uMul; varying float vA; void main(){ gl_FragColor = vec4(uColor, vA * uMul); }";
-  const trailDark = new THREE.Mesh(trGeo, new THREE.ShaderMaterial({ uniforms: { uColor: { value: new THREE.Color(0x0c0414) }, uMul: { value: 0.6 } }, vertexShader: trVS, fragmentShader: trFS, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
-  const trailGlow = new THREE.Mesh(trGeo, new THREE.ShaderMaterial({ uniforms: { uColor: { value: new THREE.Color(0x9a66ff) }, uMul: { value: 0.85 } }, vertexShader: trVS, fragmentShader: trFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
-  trailDark.frustumCulled = trailGlow.frustumCulled = false;
-  scene.add(trailDark, trailGlow);
-  let trInit = false;
+
+  // ---------- the warhorse ----------
+  function dappleTexture() {
+    const c = document.createElement("canvas"); c.width = 512; c.height = 256;
+    const g = c.getContext("2d");
+    g.fillStyle = "#131316"; g.fillRect(0, 0, 512, 256);
+    const r = mulberry(11);
+    for (let i = 0; i < 380; i++) {
+      const x = r() * 512, y = r() * 256, rad = 2 + r() * 6, v = 105 + r() * 60 | 0;
+      g.fillStyle = "rgba(" + v + "," + v + "," + (v + 8) + "," + (0.3 + r() * 0.4).toFixed(2) + ")";
+      g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill();
+    }
+    for (let i = 0; i < 1100; i++) {
+      const x = r() * 512, y = r() * 256, rad = 0.7 + r() * 1.4, v = 140 + r() * 70 | 0;
+      g.fillStyle = "rgba(" + v + "," + v + "," + v + "," + (0.4 + r() * 0.5).toFixed(2) + ")";
+      g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill();
+    }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    return t;
+  }
+  function makeHorse() {
+    const tex = dappleTexture();
+    const coat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.42, metalness: 0.05 });
+    const coatLeg = new THREE.MeshStandardMaterial({ map: tex, color: 0x9a9a9a, roughness: 0.5 });
+    const mane = new THREE.MeshStandardMaterial({ color: 0xf5f2ea, roughness: 0.75, side: THREE.DoubleSide });
+    const hoof = new THREE.MeshStandardMaterial({ color: 0x2b2725, roughness: 0.55 });
+    const muzzle = new THREE.MeshStandardMaterial({ color: 0x2c2c31, roughness: 0.6 });
+    const leather = new THREE.MeshStandardMaterial({ color: 0x6d3f20, roughness: 0.75 });
+    const brass = new THREE.MeshStandardMaterial({ color: 0xd8ab45, metalness: 0.6, roughness: 0.3 });
+    const white = new THREE.MeshStandardMaterial({ color: 0xf2eee6, roughness: 0.3 });
+    const black = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.2 });
+    const HIP = 1.31;
+
+    const root = new THREE.Group();
+    const pelvis = new THREE.Group(); pelvis.position.y = HIP; root.add(pelvis);
+    const body = new THREE.Group(); pelvis.add(body);
+
+    mk(new THREE.SphereGeometry(0.5, 20, 16), coat, 0, 0.55, 0, body).scale.set(1, 1.25, 0.92);
+    mk(new THREE.SphereGeometry(0.48, 20, 16), coat, 0, 0.98, 0.07, body).scale.set(1.08, 0.95, 0.95);
+    mk(new THREE.SphereGeometry(0.46, 18, 14), coat, 0, 0.1, -0.08, body).scale.set(1.12, 0.8, 1.02);
+    // tack: saddle, girth, stirrups
+    mk(new THREE.BoxGeometry(0.55, 0.62, 0.16), leather, 0, 0.62, -0.5, body);
+    mk(new THREE.BoxGeometry(0.2, 0.12, 0.12), leather, 0, 0.95, -0.58, body);
+    const girth = mk(new THREE.TorusGeometry(0.53, 0.035, 6, 32), leather, 0, 0.5, -0.02, body); girth.rotation.x = Math.PI / 2; girth.scale.set(1, 0.9, 1);
+    for (const s of [-1, 1]) {
+      mk(new THREE.BoxGeometry(0.04, 0.45, 0.05), leather, s * 0.5, 0.3, -0.3, body);
+      const st = mk(new THREE.TorusGeometry(0.07, 0.015, 6, 16), brass, s * 0.5, 0.03, -0.3, body); st.rotation.y = Math.PI / 2;
+    }
+    const chestMark = new THREE.Object3D(); chestMark.position.set(0, 0.95, 0.35); body.add(chestMark);
+
+    // neck, mane, head
+    const neck = new THREE.Group(); neck.position.set(0, 1.2, 0.1); body.add(neck);
+    mk(new THREE.CylinderGeometry(0.19, 0.28, 0.9, 14), coat, 0, 0.4, 0, neck);
+    const maneStrips = [];
+    for (let i = 0; i < 8; i++) {
+      const g = new THREE.Group(); g.position.set(0, 0.05 + i * 0.11, -0.2 + i * 0.012); neck.add(g);
+      const m = mk(new THREE.BoxGeometry(0.06, 0.34, 0.18), mane, 0, -0.12, -0.08, g);
+      g.rotation.x = 0.55;
+      maneStrips.push(g);
+    }
+    const head = new THREE.Group(); head.position.y = 0.88; neck.add(head);
+    mk(new THREE.SphereGeometry(0.21, 16, 12), coat, 0, 0, 0, head).scale.set(0.92, 1, 1.12);
+    const mz = mk(new THREE.CylinderGeometry(0.125, 0.18, 0.56, 14), coat, 0, -0.11, 0.26, head); mz.rotation.x = Math.PI / 2 + 0.35;
+    mk(new THREE.SphereGeometry(0.135, 14, 10), muzzle, 0, -0.21, 0.52, head).scale.set(1, 0.9, 1.05);
+    const nostrils = new THREE.Object3D(); nostrils.position.set(0, -0.2, 0.66); head.add(nostrils);
+    for (const s of [-1, 1]) {
+      mk(new THREE.SphereGeometry(0.03, 8, 6), black, s * 0.06, -0.19, 0.64, head);
+      mk(new THREE.SphereGeometry(0.052, 12, 10), white, s * 0.165, 0.05, 0.1, head);
+      mk(new THREE.SphereGeometry(0.032, 10, 8), black, s * 0.2, 0.055, 0.12, head);
+      const ear = mk(new THREE.ConeGeometry(0.055, 0.22, 6), coat, s * 0.09, 0.24, -0.04, head); ear.rotation.z = -s * 0.25;
+      // bridle: cheek strap + bit ring
+      const ch = mk(new THREE.BoxGeometry(0.02, 0.36, 0.035), leather, s * 0.17, -0.06, 0.2, head); ch.rotation.x = 0.35;
+      const ring = mk(new THREE.TorusGeometry(0.035, 0.01, 6, 12), brass, s * 0.14, -0.24, 0.42, head); ring.rotation.y = Math.PI / 2;
+    }
+    const nose = mk(new THREE.TorusGeometry(0.155, 0.018, 6, 20), leather, 0, -0.16, 0.36, head); nose.rotation.x = 0.35 + Math.PI / 2; nose.scale.set(1, 1, 0.9);
+    {
+      const curve = new THREE.CatmullRomCurve3([V(-0.14, -0.24, 0.42), V(-0.1, -0.7, 0.3), V(0, -0.85, 0.2), V(0.1, -0.7, 0.3), V(0.14, -0.24, 0.42)]);
+      mk(new THREE.TubeGeometry(curve, 24, 0.012, 5, false), leather, 0, 0, 0, head);
+    }
+    for (let i = 0; i < 4; i++) {
+      const f = mk(new THREE.BoxGeometry(0.05, 0.24, 0.12), mane, (i - 1.5) * 0.04, 0.16, 0.12, head);
+      f.rotation.set(-0.6, 0, (i - 1.5) * 0.25);
+    }
+
+    // arms (front legs)
+    function arm(s) {
+      const sh = new THREE.Group(); sh.position.set(s * 0.44, 1.05, 0.05); body.add(sh);
+      mk(new THREE.CylinderGeometry(0.15, 0.11, 0.56, 12), coat, 0, -0.28, 0, sh);
+      const el = new THREE.Group(); el.position.y = -0.56; sh.add(el);
+      mk(new THREE.CylinderGeometry(0.1, 0.075, 0.5, 10), coatLeg, 0, -0.25, 0, el);
+      mk(new THREE.SphereGeometry(0.085, 10, 8), coatLeg, 0, -0.5, 0, el);
+      mk(new THREE.CylinderGeometry(0.095, 0.12, 0.15, 12), hoof, 0, -0.6, 0.01, el);
+      const fist = new THREE.Object3D(); fist.position.y = -0.62; el.add(fist);
+      return { sh, el, fist };
+    }
+    const armR = arm(-1), armL = arm(1);
+    function leg(s) {
+      const hip = new THREE.Group(); hip.position.set(s * 0.25, 0, -0.03); pelvis.add(hip);
+      mk(new THREE.CylinderGeometry(0.22, 0.14, 0.62, 12), coat, 0, -0.31, 0, hip);
+      const kn = new THREE.Group(); kn.position.y = -0.62; hip.add(kn);
+      mk(new THREE.CylinderGeometry(0.1, 0.08, 0.52, 10), coatLeg, 0, -0.26, 0, kn);
+      mk(new THREE.SphereGeometry(0.085, 10, 8), coatLeg, 0, -0.52, 0, kn);
+      mk(new THREE.CylinderGeometry(0.1, 0.125, 0.15, 12), hoof, 0, -0.62, 0.01, kn);
+      const foot = new THREE.Object3D(); foot.position.y = -0.66; kn.add(foot);
+      return { hip, kn, foot };
+    }
+    const legR = leg(-1), legL = leg(1);
+
+    // tail
+    const tail = new THREE.Group(); tail.position.set(0, 0.02, -0.45); body.add(tail);
+    const tailSegs = [];
+    let tp = tail;
+    for (let i = 0; i < 6; i++) {
+      const g = new THREE.Group(); g.position.y = i === 0 ? 0 : -0.17; tp.add(g);
+      mk(new THREE.BoxGeometry(0.16 + i * 0.012, 0.2, 0.1 + i * 0.01), mane, 0, -0.08, 0, g);
+      tailSegs.push(g); tp = g;
+    }
+    return { root, pelvis, body, neck, head, nostrils, chestMark, maneStrips, armR, armL, legR, legL, tail, tailSegs, HIP, yaw: Math.PI / 2, gait: 0 };
+  }
+
+  const H = makeHorse(); scene.add(H.root); H.root.position.set(0, 0, 5);
+  const D = makeDragon(); scene.add(D.root); D.root.position.set(16, 12, -2);
+  H.root.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  D.grounded = 0;
 
   // ---------- one-shot effects ----------
   const fx = [];
@@ -671,7 +677,7 @@
   function shockwave(at, maxR, dur, color, flat) {
     const geo = new THREE.RingGeometry(0.85, 1, 64);
     const m = new THREE.MeshBasicMaterial({ color, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-    const r = new THREE.Mesh(geo, m); r.position.copy(at); if (flat) r.rotation.x = -Math.PI / 2; scene.add(r);
+    const r = new THREE.Mesh(geo, m); r.position.copy(at); if (flat === true) r.rotation.x = -Math.PI / 2; else if (flat) r.lookAt(flat); scene.add(r);
     fx.push({ age: 0, dur, update(dt, k) { r.scale.setScalar(1 + maxR * (1 - Math.pow(1 - k, 3))); m.opacity = 1 - k; }, dispose() { scene.remove(r); geo.dispose(); m.dispose(); } });
   }
   function flashBall(at, size, dur, color) {
@@ -690,183 +696,193 @@
   let shake = 0;
   const addShake = (a) => { if (!reduceMotion) shake = Math.max(shake, a); };
   const wp = (o, out) => o.getWorldPosition(out || V());
-  const pChest = () => P.root.position.clone().add(V(0, 2.0, 0));
 
+
+  const hChest = () => wp(H.chestMark);
+  const dust0 = [0.5, 0.42, 0.33, 0.55], dust1 = [0.32, 0.27, 0.22, 0];
+  const gold0 = [1, 0.95, 0.65, 1], gold1 = [1, 0.5, 0.15, 0];
+  const steam0 = [0.9, 0.9, 0.95, 0.5], steam1 = [0.7, 0.7, 0.75, 0];
+  function dustRing(at, n, speed) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * TAU;
+      smoke.spawn(tmpV2.set(at.x + Math.cos(a) * 1.5, at.y + 0.2, at.z + Math.sin(a) * 1.5), V(Math.cos(a) * speed * rnd(0.5, 1), rnd(0.3, 1.5), Math.sin(a) * speed * rnd(0.5, 1)), rnd(1, 1.8), 0.9, 3.2, dust0, dust1, 1.8, 0);
+    }
+  }
+  function doLand() {
+    const at = D.root.position.clone(); at.y = groundH(at.x, at.z);
+    dustRing(at, 90, 9); shockwave(at.clone().setY(at.y + 0.1), 10, 0.8, 0xe8dcc8, true); addShake(0.7);
+  }
+  function doCrack() {
+    const n = wp(H.neck).add(V(0, 0.3, 0));
+    burst(n, 10, 3, glow, [1, 1, 1, 1], [0.8, 0.8, 1, 0], 0.15, 0.02, 0.3, 3); addShake(0.08);
+  }
   function doRoar() {
-    D.roarT = 1.4; addShake(0.3);
+    D.roarT = 1.4; addShake(0.35);
     const m = wp(D.mouth);
     for (let i = 0; i < 30; i++) fire.spawn(m, randDir(tmpV).multiplyScalar(rnd(2, 6)), rnd(0.5, 1), 0.3, 0.1, C.fire0, PRISM[i % PRISM.length], 1, 2);
   }
-  function doSlash() {
-    const neckP = wp(D.neck[3]);
-    const origin = wp(P.upper).add(V(0, 0.9, 0));
-    crescent(origin, neckP, -0.8, 2.4, 0.6, origin.distanceTo(neckP) * 0.8);
-    D.flash = 1.1; D.jolt = -0.3; addShake(0.55);
-    burst(neckP, 70, 12, glow, C.violet0, C.violet1, 0.35, 0.05, 0.8, 2);
-    burst(neckP, 40, 5, smoke, C.shade0, C.shade1, 0.8, 2.4, 1.3, 1.5);
-    burst(neckP, 30, 14, fire, C.spark0, C.spark1, 0.2, 0.05, 0.5, 2);
+  function doSnort() {
+    const n = wp(H.nostrils), dir = H.head.getWorldDirection(V());
+    for (let i = 0; i < 36; i++) smoke.spawn(n, dir.clone().multiplyScalar(rnd(2, 4)).add(randDir(tmpV).multiplyScalar(0.6)).add(V(0, -0.8, 0)), rnd(0.6, 1.1), 0.12, 0.9, steam0, steam1, 2.2, 0.4);
+    addShake(0.06);
   }
-  function doTailHit() {
-    const c = pChest(); addShake(0.75);
-    burst(c, 60, 16, fire, C.spark0, C.spark1, 0.25, 0.05, 0.6, 2);
-    flashBall(c, 3, 0.25, 0xffc080);
+  function hit(at, big) {
+    burst(at, big ? 120 : 45, big ? 16 : 9, glow, gold0, gold1, 0.3, 0.04, 0.6, 2.5);
+    burst(at, big ? 60 : 20, big ? 12 : 7, fire, C.fire0, PRISM[(Math.random() * PRISM.length) | 0], 0.25, 0.05, 0.5, 2);
+    flashBall(at, big ? 2.6 : 1.3, big ? 0.25 : 0.15, 0xfff2cf);
+    D.flash = big ? 1.4 : 0.8;
+    addShake(big ? 1.0 : 0.3);
   }
-  function doSmite() {
-    const tip = wp(P.bladeTip);
-    const at = wp(D.body).add(V(0, 1.8, 0));
-    crescent(tip.clone().add(V(0, 2.5, 0)), at, 0, 4.2, 0.7, 2.5);
-    shockwave(at, 22, 1.2, 0x9c70ff, true);
-    shockwave(at.clone().add(V(0, 0.3, 0)), 14, 0.9, 0xe6d6ff, true);
-    flashBall(at, 7, 0.45, 0xc9a8ff);
-    pillar(at, 0.9);
-    D.flash = 1.6; D.jolt = 0.55; addShake(1.3);
-    burst(at, 220, 22, glow, C.violet0, C.violet1, 0.45, 0.05, 1.1, 1.8);
-    burst(at, 90, 8, smoke, C.shade0, C.shade1, 1.2, 4.0, 1.8, 1.2);
-    burst(at, 40, 18, fire, C.spark0, C.spark1, 0.25, 0.05, 0.6, 2);
+  function doJab() { hit(wp(D.head).add(V(0, -0.1, 0)), false); D.jolt = -0.12; }
+  function doUppercut() { const at = wp(D.head).add(V(0, -0.4, 0.2)); hit(at, true); D.jolt = -0.5; D.jawSnap = 1; }
+  function doBuck() {
+    const at = wp(D.body).add(V(0, 0.2, 0));
+    const hoofs = wp(H.legR.foot).lerp(wp(H.legL.foot), 0.5);
+    hit(hoofs.clone().lerp(at, 0.35), true);
+    shockwave(hoofs.clone().lerp(at, 0.35), 12, 0.7, 0xfff0c8, hChest());
+    shockwave(hoofs.clone().lerp(at, 0.35), 7, 0.5, 0xc9b8ff, hChest());
+    burst(at, 70, 10, smoke, dust0, dust1, 1, 3, 1.4, 1.5);
+    D.jolt = -0.45; D.flash = 1.8; addShake(1.4);
   }
+  function doTakeoff() { const at = D.root.position.clone(); at.y = groundH(at.x, at.z); dustRing(at, 70, 11); addShake(0.3); }
 
   // ---------- choreography ----------
   const PHASES = [
-    { key: "rise", name: "Flight", start: 0, end: 4, line: "The Fly spell takes hold. He lifts off above the village rooftops as the opal dragon circles in.", cam: { side: 2.75, pitch: 0.1, mix: 0.1, fixed: 8.5 } },
-    { key: "fire", name: "Prismatic Breath", start: 4, end: 8, line: "The opal dragon unleashes a cone of prismatic fire. He rolls through the air and out of its path.", cam: { side: 0.8, pitch: 0.2, mix: 0.45, k: 1 } },
-    { key: "cut", name: "First Cut", start: 8, end: 11.5, line: "He closes the distance and draws the shadow blade across the dragon's neck.", cam: { side: -0.65, pitch: 0.14, mix: 0.4, k: 0.85 } },
-    { key: "tail", name: "Tail Sweep", start: 11.5, end: 15, line: "The dragon spins. Its tail catches him mid-air and sends him tumbling.", cam: { side: 1.25, pitch: 0.3, mix: 0.5, k: 1.1 } },
-    { key: "gather", name: "Gathering Shadow", start: 15, end: 19, line: "He climbs above the fight and pulls darkness into the blade. The dragon's breath falls short.", cam: { side: 0.55, pitch: -0.08, mix: 0.3, k: 0.9 } },
-    { key: "smite", name: "Divine Smite", start: 19, end: 22.5, line: "He dives, sword overhead, and brings it down on the dragon's back.", cam: { side: 1.35, pitch: 0.35, mix: 0.55, k: 1 } },
-    { key: "land", name: "Standoff", start: 22.5, end: 28, line: "The dragon breaks off and circles wide. He sets down, the blade still smoking.", cam: { side: 0.9, pitch: 0.12, mix: 0.3, k: 1 } }
+    { key: "intro", name: "Rude Awakening", start: 0, end: 4, line: "A dragon lands in his pasture. He looks up from the grass, then stands up on his hind legs.", cam: { abs: 0.75, pitch: 0.06, mix: 0.1, fixed: 8.5 } },
+    { key: "square", name: "Squaring Off", start: 4, end: 7.5, line: "He cracks his neck, raises his hooves, and snorts. The dragon is not sure what it is looking at.", cam: { side: 0.55, pitch: 0.12, mix: 0.45, k: 0.9 } },
+    { key: "breath", name: "Prismatic Breath", start: 7.5, end: 11.5, line: "The dragon breathes prismatic fire. He leans back and lets it pass right over him.", cam: { side: 1.57, pitch: 0.06, mix: 0.3, k: 0.8 } },
+    { key: "onetwo", name: "One-Two", start: 11.5, end: 15, line: "He charges in. Two jabs, then a hoof uppercut to the jaw.", cam: { side: 0.95, pitch: 0.1, mix: 0.45, k: 0.75 } },
+    { key: "tail", name: "Tail Whip", start: 15, end: 18.5, line: "The dragon spins and sweeps its tail along the ground. He hops it.", cam: { side: 1.2, pitch: 0.3, mix: 0.4, k: 1.05 } },
+    { key: "buck", name: "Double Buck", start: 18.5, end: 22.5, line: "He turns around, plants his front hooves, and kicks with both hind legs.", cam: { side: 1.57, pitch: 0.12, mix: 0.45, k: 0.9 } },
+    { key: "graze", name: "Back to Grazing", start: 22.5, end: 28, line: "The dragon flies off. He flexes, drops back to all fours, and goes back to eating grass.", cam: { side: 0.15, pitch: 0.1, mix: 0.08, fixed: 8.5 } }
   ];
   const LOOP = 28;
-  const EVENTS = [[3.2, doRoar], [9.35, doSlash], [21.0, doSmite], [24.2, doRoar]];
-  const FIRE_WINDOWS = [[5.0, 7.4], [17.4, 18.6]];
+  const EVENTS = [[2.2, doLand], [4.35, doCrack], [4.75, doCrack], [5.2, doRoar], [6.3, doSnort], [12.6, doJab], [13.0, doJab], [13.6, doUppercut], [20.9, doBuck], [24.2, doTakeoff]];
+  const FIRE_WINDOWS = [[8.2, 10.6]];
   const phaseAt = (t) => PHASES.find((p) => t >= p.start && t < p.end) || PHASES[PHASES.length - 1];
+  const gauss = (t, c, w) => Math.exp(-Math.pow((t - c) / w, 2));
 
-  const POSES = {
-    stand:   { shRx: -0.35, shRz: -0.12, elR: -0.35, wrR: 0.35, shLx: 0.05, shLz: 0.12, elL: -0.15, hipL: 0, hipR: 0, knL: 0, knR: 0, tw: 0, pitch: 0 },
-    guard:   { shRx: -1.1, shRz: -0.25, elR: -0.7, wrR: 0.5, shLx: -0.5, shLz: 0.35, elL: -1.0, hipL: 0.35, hipR: 0.1, knL: 0.65, knR: 0.35, tw: 0, pitch: 0 },
-    charge:  { shRx: 0.5, shRz: -0.35, elR: -0.3, wrR: -0.2, shLx: -0.9, shLz: 0.3, elL: -0.4, hipL: 0.6, hipR: 0.45, knL: 0.7, knR: 0.5, tw: -0.2, pitch: 0.25 },
-    windupD: { shRx: -2.7, shRz: -0.9, elR: -0.6, wrR: 0, shLx: -0.8, shLz: 0.5, elL: -0.8, hipL: 0.3, hipR: 0.1, knL: 0.6, knR: 0.3, tw: -0.35, pitch: -0.1 },
-    strikeD: { shRx: -0.5, shRz: 0.7, elR: -0.1, wrR: 0.2, shLx: 0.2, shLz: 0.4, elL: -0.3, hipL: 0.5, hipR: 0.2, knL: 0.5, knR: 0.3, tw: 0.45, pitch: 0.3 },
-    knocked: { shRx: -2.2, shRz: -1.3, elR: -0.4, wrR: 0.5, shLx: -2.2, shLz: 1.3, elL: -0.4, hipL: -0.4, hipR: -0.2, knL: 1.0, knR: 0.6, tw: 0, pitch: 0 },
-    raise:   { shRx: -3.0, shRz: -0.15, elR: -0.1, wrR: 1.5, shLx: -2.95, shLz: 0.2, elL: -0.25, hipL: 0.1, hipR: 0.05, knL: 0.3, knR: 0.2, tw: 0, pitch: -0.1 },
-    windup:  { shRx: -3.0, shRz: -0.1, elR: -0.8, wrR: 0.2, shLx: -3.0, shLz: 0.1, elL: -0.8, hipL: 0.2, hipR: 0.2, knL: 0.9, knR: 0.9, tw: 0, pitch: -0.2 },
-    strike:  { shRx: -0.6, shRz: 0.05, elR: -0.1, wrR: 0.4, shLx: -0.6, shLz: -0.05, elL: -0.1, hipL: 0.5, hipR: 0.5, knL: 0.8, knR: 0.8, tw: 0, pitch: 0.35 }
-  };
-  const pose = Object.assign({}, POSES.stand);
+  const BASE = { pitch: 0, roll: 0, tw: 0, bob: 0, neckX: 0.35, neckY: 0, headX: 0.55, headZ: 0, shRx: 0.1, shRz: -0.15, elRx: -0.25, elRz: 0, shLx: 0.1, shLz: 0.15, elLx: -0.25, elLz: 0, hipR: 0, knR: 0, hipL: 0, knL: 0, tail: 0 };
+  const mkPose = (base, o) => Object.assign({}, base, o);
+  const HP = {};
+  HP.stand = mkPose(BASE, { pitch: 0.08 });
+  HP.quad = mkPose(BASE, { pitch: 1.57, neckX: -0.85, headX: 0.5, shRx: -1.57, shRz: 0, elRx: 0, shLx: -1.57, shLz: 0, elLx: 0, tail: 0.3 });
+  HP.graze = mkPose(HP.quad, { neckX: 0.3, headX: 0.75 });
+  HP.rear = mkPose(BASE, { pitch: -0.25, bob: 0.1, neckX: -0.2, headX: 0.3, shRx: -1.3, shRz: -0.2, elRx: -1.6, shLx: -1.1, shLz: 0.2, elLx: -1.8, knR: 0.1, knL: 0.1, tail: 0.5 });
+  HP.guard = mkPose(BASE, { pitch: 0.15, bob: -0.08, neckX: 0.45, headX: 0.55, shRx: -1.0, shRz: -0.2, elRx: -1.9, shLx: -1.1, shLz: 0.2, elLx: -1.9, hipR: 0.3, knR: 0.35, hipL: -0.3, knL: 0.2, tail: 0.2 });
+  HP.jabL = mkPose(HP.guard, { shLx: -1.55, shLz: 0.05, elLx: -0.1, tw: -0.3 });
+  HP.jabR = mkPose(HP.guard, { shRx: -1.55, shRz: -0.05, elRx: -0.1, tw: 0.3 });
+  HP.crouch = mkPose(HP.guard, { bob: -0.35, knR: 0.9, knL: 0.7, hipR: -0.2, hipL: -0.5, shRx: 0.4, elRx: -1.6, tw: -0.35 });
+  HP.upper = mkPose(HP.guard, { bob: 0.45, shRx: -2.7, shRz: -0.1, elRx: -0.9, tw: 0.45, pitch: -0.1, neckX: 0.2, hipR: 0.1, knR: 0, hipL: -0.1, knL: 0 });
+  HP.limbo = mkPose(BASE, { pitch: -1.25, bob: -0.5, neckX: -0.3, headX: 0.3, shRx: 0.6, shRz: -1.3, elRx: -0.3, shLx: 0.6, shLz: 1.3, elLx: -0.3, hipR: -1.0, knR: 1.8, hipL: -1.0, knL: 1.8, tail: -0.2 });
+  HP.tuck = mkPose(BASE, { pitch: 0.25, neckX: 0.3, headX: 0.4, shRx: -2.8, shRz: -0.3, elRx: -0.3, shLx: -2.8, shLz: 0.3, elLx: -0.3, hipR: -1.4, knR: 2.2, hipL: -1.4, knL: 2.2, tail: 0.8 });
+  HP.coil = mkPose(HP.quad, { pitch: 1.5, bob: -0.15, hipR: 0.3, knR: 0.8, hipL: 0.3, knL: 0.8, neckX: -1.1, neckY: 1.0, headX: 0.3 });
+  HP.buck = mkPose(HP.quad, { pitch: 1.95, bob: 0.35, hipR: 1.9, knR: 0.05, hipL: 1.8, knL: 0.1, shRx: -1.95, shLx: -1.95, neckX: -0.6, neckY: 0.9, tail: 1.2 });
+  HP.flex = mkPose(BASE, { neckX: 0.2, headX: 0.35, shRx: 0, shRz: -1.45, elRx: 0, elRz: -1.9, shLx: 0, shLz: 1.45, elLx: 0, elLz: 1.9, hipR: 0.1, hipL: -0.1, tail: 0.5 });
+  const FAST = { jabL: 24, jabR: 24, upper: 22, buck: 22, tuck: 12, limbo: 9, crouch: 14 };
+  const pose = Object.assign({}, HP.graze);
 
-  const st = {
-    pT: V(6, 0, 10), pLam: 2, pLook: V(), poseName: "stand", pRoll: 0, pFlip: 0,
-    dT: V(22, 14, -4), dLam: 1.5, dFaceMode: "target", dFace: V(), dSpin: 0, dAimT: V(), dAimLam: 2.5, firing: false, gather: 0, dilate: 1
-  };
-  const dAim = V(0, 10, 0);
+  const st = { hT: V(0, 0, 5), hLam: 2.5, hLook: V(), poseName: "graze", jump: 0, bounce: 0, headZ: 0, dT: V(), dLam: 1.8, dFaceMode: "target", dFace: V(), dSpin: 0, dAimT: V(), dAimLam: 2.5, firing: false, dilate: 1, wantGround: 0 };
+  const dAim = V(0, 3, 5);
   let cur = null, ps = {};
+  const DHOME = V(0, 2.2, -6);
 
   function enter(ph) {
     cur = ph; ps = {};
-    if (ph.key === "tail") { ps.yaw0 = D.yaw; ps.hit = false; }
-    if (ph.key === "gather") ps.a0 = Math.atan2(D.root.position.z + 2, D.root.position.x);
-    if (ph.key === "land") ps.hold = P.root.position.clone();
+    if (ph.key === "tail") ps.yaw0 = D.yaw;
+    if (ph.key === "buck") ps.d0 = D.root.position.clone();
+    if (ph.key === "graze") { ps.hold = H.root.position.clone(); ps.d0 = D.root.position.clone(); }
     setCaption(ph);
   }
 
   function direct(t) {
     const ph = phaseAt(t), u = t - ph.start;
     if (ph !== cur) enter(ph);
-    const dp = D.root.position, pp = P.root.position, chest = pChest();
+    const dp = D.root.position, hp = H.root.position, chest = hChest();
     st.firing = FIRE_WINDOWS.some((w) => t >= w[0] && t < w[1]);
-    st.gather = 0; st.pRoll = 0; st.pFlip = 0; st.dSpin = 0; st.dilate = 1;
-    st.dFaceMode = "target"; st.dFace.copy(pp); st.dAimT.copy(chest); st.dAimLam = 2.5;
-    st.dLam = 1.6; st.pLam = 2.2; st.pLook.copy(dp);
+    st.dSpin = 0; st.jump = 0; st.bounce = 0; st.headZ = 0;
+    st.dilate = 1 - 0.5 * gauss(t, 9.3, 0.6) - 0.55 * gauss(t, 13.6, 0.18) - 0.75 * gauss(t, 20.9, 0.3);
+    st.dFaceMode = "target"; st.dFace.copy(hp); st.dAimT.copy(chest); st.dAimLam = 2.5; st.dLam = 1.8; st.wantGround = 1;
+    st.dT.copy(DHOME); st.hLam = 2.5; st.hLook.copy(wp(D.head)); st.hLook.y = 0;
+    const circle = (a, y) => st.dT.set(Math.cos(a) * 18, y, Math.sin(a) * 18 - 4);
 
     switch (ph.key) {
-      case "rise": {
-        const a = t * 0.42;
-        st.dT.set(Math.cos(a) * 22, 14, Math.sin(a) * 22 - 4); st.dFaceMode = "travel";
-        st.pT.set(6, 9 * ss(1, 3.8, u), 10); st.pLam = 2.5;
-        st.poseName = u < 1.1 ? "stand" : "guard";
+      case "intro": {
+        if (u < 1.3) { circle(t * 0.55 + 0.8, 12); st.dFaceMode = "travel"; st.wantGround = 0; }
+        else st.dLam = 3.2;
+        st.hT.set(0, 0, 5);
+        st.poseName = u < 1.6 ? "graze" : u < 2.3 ? "quad" : u < 3.1 ? "rear" : "stand";
+        if (u < 1.8) st.hLook.copy(hp).add(V(1, 0, 0));
         break;
       }
-      case "fire": {
-        st.dT.set(0, 11, -6);
-        st.dAimLam = 1.3;
-        const s = ss(0.9, 3.3, u);
-        st.pT.set(6 - 13 * s, 9 + Math.sin(s * Math.PI) * 3.5 + 1.5 * s, 10 - 2 * s); st.pLam = 3.5;
-        st.pRoll = -ss(1.7, 2.8, u) * TAU;
-        st.poseName = "guard";
+      case "square": {
+        st.hT.set(Math.sin(u * 1.7) * 1.3, 0, 3.5);
+        st.poseName = u < 1.0 ? "stand" : "guard";
+        st.headZ = u < 1.0 ? Math.sin(u * TAU) * 0.55 : 0;
+        st.bounce = u > 1.0 ? 1 : 0;
         break;
       }
-      case "cut": {
-        const neckP = wp(D.neck[3]);
-        st.dT.set(0, u > 1.35 ? 12.5 : 11, u > 1.35 ? -9.5 : -6); st.dLam = u > 1.35 ? 3 : 1.6;
-        if (u < 1.9) { st.pT.copy(neckP).add(V(-2.0, 1.2, 1.9)); st.pLam = u < 1.35 ? 4.5 : 1; }
-        else { st.pT.set(-5, 11, 8); st.pLam = 2; }
-        st.pLook.copy(neckP);
-        st.poseName = u < 0.75 ? "charge" : u < 1.3 ? "windupD" : u < 1.9 ? "strikeD" : "guard";
+      case "breath": {
+        st.hT.set(0, 0, 3.2);
+        st.poseName = u < 0.5 || u > 3.3 ? "guard" : "limbo";
+        st.bounce = u > 3.4 ? 1 : 0;
+        st.dAimT.copy(hp).add(V(0, 3.3, 0)); st.dAimLam = 3;
+        break;
+      }
+      case "onetwo": {
+        const hw = wp(D.head);
+        const dir = V(hp.x - dp.x, 0, hp.z - dp.z); if (dir.lengthSq() < 0.01) dir.set(0, 0, 1); dir.normalize();
+        if (u < 2.7) { st.hT.set(hw.x, 0, hw.z).addScaledVector(dir, 1.7); st.hLam = 5; }
+        else { st.hT.set(0, 0, 3.5); st.hLam = 2.5; }
+        st.poseName = u < 0.9 ? "guard" : u < 1.3 ? "jabL" : u < 1.45 ? "guard" : u < 1.8 ? "jabR" : u < 2.05 ? "crouch" : u < 2.6 ? "upper" : "guard";
+        st.bounce = u < 0.9 || u > 2.7 ? 1 : 0;
+        st.dAimT.copy(chest).add(V(0, 0.4, 0)); st.dAimLam = 3;
         break;
       }
       case "tail": {
-        st.dT.set(0, 11, -6); st.dFaceMode = "fixed";
-        st.dSpin = ss(0.8, 2.3, u) * TAU;
-        st.dAimT.copy(wp(D.head)).add(V(Math.sin(D.yaw + st.dSpin), 0, Math.cos(D.yaw + st.dSpin)).multiplyScalar(8));
-        st.dAimLam = 6;
-        if (!ps.hit) {
-          const dir = V(pp.x - dp.x, 0, pp.z - dp.z); if (dir.lengthSq() < 0.01) dir.set(-1, 0, 0); dir.normalize();
-          st.pT.copy(dp).addScaledVector(dir, 7.8); st.pT.y = dp.y - 2.1; st.pLam = 2.5; st.poseName = "guard";
-          let close = false;
-          if (u > 0.8) for (let i = 2; i < 11; i++) { const sp = wp(D.tail[i], tmpV2); if (Math.hypot(sp.x - chest.x, sp.z - chest.z) < 2.3 && Math.abs(sp.y - chest.y) < 3) { close = true; break; } }
-          if (close || u > 2.1) {
-            ps.hit = true; ps.hitU = u;
-            const out = V(pp.x - dp.x, 0, pp.z - dp.z).normalize();
-            const tang = V(-out.z, 0, out.x);
-            ps.knockTo = pp.clone().addScaledVector(tang.multiplyScalar(-1).add(out.multiplyScalar(0.7)).normalize(), 13).add(V(0, 2.5, 0));
-            doTailHit();
-          }
-        } else {
-          const k = u - ps.hitU;
-          st.pT.copy(ps.knockTo); st.pLam = k < 1.2 ? 5 : 2;
-          st.poseName = k < 1.1 ? "knocked" : "guard";
-          st.pFlip = ss(0, 1.1, k) * TAU;
-        }
+        st.hT.set(0, 0, 3.5);
+        st.dFaceMode = "fixed";
+        st.dSpin = ss(0.6, 2.2, u) * TAU;
+        st.dAimT.copy(wp(D.head)).add(V(Math.sin(D.yaw + st.dSpin), -0.3, Math.cos(D.yaw + st.dSpin)).multiplyScalar(8)); st.dAimLam = 6;
+        st.jump = u > 0.95 && u < 1.85 ? Math.sin(Math.PI * (u - 0.95) / 0.9) * 2.4 : 0;
+        st.poseName = st.jump > 0.05 ? "tuck" : "guard";
+        st.bounce = st.jump > 0 ? 0 : 1;
         break;
       }
-      case "gather": {
-        const a = ps.a0 + u * 0.8;
-        st.dT.set(Math.cos(a) * 11, 7.5, Math.sin(a) * 11 - 2); st.dFaceMode = "travel"; st.dAimLam = 1.5;
-        st.pT.set(1, 23, 3); st.pLam = 1.5;
-        st.poseName = u < 0.8 ? "guard" : "raise";
-        st.gather = ss(0.8, 2.5, u);
+      case "buck": {
+        const d0 = ps.d0 || dp;
+        const dir = V(hp.x - d0.x, 0, hp.z - d0.z); if (dir.lengthSq() < 0.01) dir.set(0, 0, 1); dir.normalize();
+        if (u < 2.4) { st.hT.set(d0.x, 0, d0.z).addScaledVector(dir, 4.9); st.hLam = 2.2; }
+        else st.hT.copy(hp);
+        if (u > 0.9) st.hLook.copy(hp).addScaledVector(dir, 3);
+        st.poseName = u < 0.9 ? "guard" : u < 1.6 ? "stand" : u < 2.3 ? "coil" : u < 2.95 ? "buck" : u < 3.4 ? "coil" : "stand";
+        if (u >= 2.4) { st.dT.set(d0.x, DHOME.y, d0.z).addScaledVector(dir, -7); st.dLam = 4; }
+        else st.dT.copy(d0);
         break;
       }
-      case "smite": {
-        st.dT.set(0, 8.5, 0);
-        if (u < 1) { st.pT.set(0, 23, 2); st.pLam = 3; st.poseName = "windup"; st.gather = 1; }
-        else if (u < 2) { st.pT.copy(dp).add(V(0, 2.6, 0.4)); st.pLam = 7; st.poseName = u < 1.75 ? "windup" : "strike"; st.gather = 1 - ss(1.8, 2, u) * 0.5; }
-        else { st.pT.copy(dp).add(V(4, 6, 7)); st.pLam = 3; st.poseName = u < 2.5 ? "strike" : "guard"; }
-        if (u >= 2 && u < 3) { st.dT.set(0, 4.2, 0); st.dLam = 6; }
-        else if (u >= 3) st.dT.set(0, 9, -4);
-        st.dilate = 1 - 0.72 * Math.exp(-Math.pow((t - 21.0) / 0.3, 2));
-        break;
-      }
-      case "land": {
-        const a = t * 0.42;
-        st.dT.set(Math.cos(a) * 22, 14, Math.sin(a) * 22 - 4); st.dFaceMode = "travel"; st.dLam = 1.2;
-        if (u < 2) { st.pT.copy(ps.hold); st.poseName = "guard"; }
-        else { st.pT.set(6, 0, 10); st.pLam = 1.4; st.poseName = u > 4.3 ? "stand" : "guard"; }
+      case "graze": {
+        const d0 = ps.d0 || dp;
+        if (u < 1.6) { st.dT.copy(d0); }
+        else { circle(t * 0.55 + 0.8, 12 + ss(1.6, 4, u) * 2); st.dFaceMode = "travel"; st.dLam = 1.2; st.wantGround = 0; }
+        if (u < 3.4) { st.hT.copy(ps.hold || hp); }
+        else { st.hT.set(0, 0, 5); st.hLam = 1.1; }
+        st.poseName = u < 0.4 ? "stand" : u < 2.7 ? "flex" : u < 3.3 ? "stand" : u < 3.9 ? "quad" : "graze";
+        if (u > 0.3 && u < 2.9) st.hLook.copy(camera.position);
+        else if (u > 3.3) st.hLook.copy(hp).add(V(1, 0, 0));
         break;
       }
     }
   }
 
   // ---------- per-frame update ----------
-  const dVel = V(), pVel = V(), prevD = V().copy(D.root.position), prevP = V().copy(P.root.position);
-  const prevTip = V(), tipVel = V();
+  const dVel = V(), hVel = V(), prevD = V().copy(D.root.position), prevH = V().copy(H.root.position);
   let simTime = 0, prevCycle = 0, playing = true, slow = false;
   const qA = new THREE.Quaternion(), qB = new THREE.Quaternion();
+  D.jawSnap = 0;
 
   function step(dt, wallT) {
     const t = ((simTime % LOOP) + LOOP) % LOOP;
     direct(t);
-
-    // events
     const wrapped = t < prevCycle;
     for (const [et, fn] of EVENTS) {
       if (dt > 0 && ((!wrapped && prevCycle < et && t >= et) || (wrapped && (prevCycle < et || t >= et)))) fn();
@@ -874,139 +890,102 @@
     prevCycle = t;
     if (dt <= 0) return;
 
-    // dragon motion
+    // dragon
     const dp = D.root.position;
     dp.x = damp(dp.x, st.dT.x, st.dLam, dt); dp.y = damp(dp.y, st.dT.y, st.dLam, dt); dp.z = damp(dp.z, st.dT.z, st.dLam, dt);
     tmpV.copy(dp).sub(prevD).divideScalar(dt); dVel.lerp(tmpV, 1 - Math.exp(-6 * dt)); prevD.copy(dp);
+    const gW = 1 - ss(2.8, 5.5, dp.y);
+    D.grounded = gW;
     let yawT = D.yaw;
     const hs = Math.hypot(dVel.x, dVel.z);
-    if (st.dFaceMode === "travel" && hs > 1.5) yawT = Math.atan2(dVel.x, dVel.z);
+    if (st.dFaceMode === "travel") { if (hs > 1.5) yawT = Math.atan2(dVel.x, dVel.z); }
     else if (st.dFaceMode === "fixed") yawT = ps.yaw0;
-    else if (st.dFaceMode !== "travel") yawT = Math.atan2(st.dFace.x - dp.x, st.dFace.z - dp.z);
+    else yawT = Math.atan2(st.dFace.x - dp.x, st.dFace.z - dp.z);
     const prevYaw = D.yaw;
-    D.yaw = dampAngle(D.yaw, yawT, 2.2, dt);
+    D.yaw = dampAngle(D.yaw, yawT, 2.4, dt);
     const yawRate = wrapA(D.yaw - prevYaw) / dt;
-    D.jolt = damp(D.jolt, 0, 3, dt);
-    D.root.rotation.set(clamp(-dVel.y * 0.05, -0.4, 0.4) + D.jolt, D.yaw + st.dSpin, clamp(-yawRate * 0.35, -0.6, 0.6));
-    const flapSpeed = 4.2 + clamp(dVel.y, 0, 6) * 0.4 + (st.dSpin > 0.1 && st.dSpin < TAU - 0.1 ? 2 : 0);
-    D.flap += dt * flapSpeed;
-    const f = Math.sin(D.flap) * 0.75 + 0.1;
-    for (const w of D.wings) w.pivot.rotation.z = w.s > 0 ? f : -f;
-    D.body.position.y = -Math.sin(D.flap) * 0.22;
-    // neck & tail
+    D.jolt = damp(D.jolt, 0, 2.5, dt);
+    D.root.rotation.set(clamp(-dVel.y * 0.04, -0.4, 0.4) + D.jolt + gW * 0.12, D.yaw + st.dSpin, clamp(-yawRate * 0.3, -0.5, 0.5) * (1 - gW));
+    D.flap += dt * (4.4 - 3.2 * gW + (st.dSpin > 0.1 && st.dSpin < TAU - 0.1 ? 1.5 : 0));
+    const amp = 0.75 - 0.6 * gW, lift = 0.1 + 0.8 * gW;
+    for (const w of D.wings) { const f = lift + Math.sin(D.flap) * amp; w.pivot.rotation.z = w.s > 0 ? f : -f; w.pivot.rotation.y = w.s * gW * 0.5; }
+    D.body.position.y = -Math.sin(D.flap) * (0.22 - 0.17 * gW);
     D.root.updateMatrixWorld(true);
     const localAim = D.body.worldToLocal(dAim.clone());
     const aYaw = clamp(Math.atan2(localAim.x, localAim.z), -1.2, 1.2);
-    const aPitch = clamp(Math.atan2(localAim.y - 2.5, Math.hypot(localAim.x, localAim.z)), -0.8, 1.0);
+    const aPitch = clamp(Math.atan2(localAim.y - 2.5, Math.hypot(localAim.x, localAim.z)), -1.0, 1.0);
+    const nk = 0.07 + 0.06 * gW;
     for (let i = 0; i < D.neck.length; i++) {
       const s = D.neck[i];
-      s.rotation.x = (i === 0 ? 0 : 0.12) + Math.sin(wallT * 1.3 + i * 0.5) * 0.03 - aPitch * 0.07;
+      s.rotation.x = (i === 0 ? 0 : 0.12) + Math.sin(wallT * 1.3 + i * 0.5) * 0.03 - aPitch * nk;
       s.rotation.y = Math.sin(wallT * 1.1 + i * 0.4) * 0.05 + aYaw * 0.1;
     }
-    const spinning = st.dSpin > 0.05 && st.dSpin < TAU - 0.05;
     for (let i = 0; i < D.tail.length; i++) {
       const s = D.tail[i];
-      s.rotation.x = -0.05 + Math.sin(wallT * 1.1 - i * 0.3) * 0.04;
-      s.rotation.y = Math.sin(wallT * 1.6 - i * 0.45) * 0.1 - (spinning ? 0.06 : 0);
+      s.rotation.x = -0.05 - gW * 0.03 + Math.sin(wallT * 1.1 - i * 0.3) * 0.04;
+      s.rotation.y = Math.sin(wallT * 1.6 - i * 0.45) * 0.1;
     }
-    // jaw
     D.roarT = Math.max(0, D.roarT - dt);
-    const jawT = st.firing ? 0.55 : D.roarT > 0 ? 0.7 * Math.sin(Math.min(1, (1.4 - D.roarT) / 1.4) * Math.PI) : 0.05;
+    D.jawSnap = damp(D.jawSnap, 0, 3, dt);
+    const jawT = st.firing ? 0.55 : D.roarT > 0 ? 0.7 * Math.sin(Math.min(1, (1.4 - D.roarT) / 1.4) * Math.PI) : 0.05 + D.jawSnap * 0.4;
     D.jawOpen = damp(D.jawOpen, jawT, 10, dt); D.jaw.rotation.x = D.jawOpen;
-    // flash
     D.flash = damp(D.flash, 0, 4, dt);
-    for (const m of D.mats) m.emissiveIntensity = D.flash;
+    for (const m of D.mats) m.emissiveIntensity = D.flash * 0.6;
 
-    // paladin motion
-    const pp = P.root.position;
-    pp.x = damp(pp.x, st.pT.x, st.pLam, dt); pp.y = damp(pp.y, st.pT.y, st.pLam, dt); pp.z = damp(pp.z, st.pT.z, st.pLam, dt);
-    tmpV.copy(pp).sub(prevP).divideScalar(dt); pVel.lerp(tmpV, 1 - Math.exp(-8 * dt)); prevP.copy(pp);
-    const grounded = pp.y < 0.15;
-    const effPose = grounded && st.poseName === "guard" ? "stand" : st.poseName;
-    const tgt = POSES[effPose];
-    const pl = effPose.indexOf("strike") === 0 ? 24 : 9;
+    // horse
+    const hp = H.root.position;
+    hp.x = damp(hp.x, st.hT.x, st.hLam, dt); hp.z = damp(hp.z, st.hT.z, st.hLam, dt);
+    hp.y = groundH(hp.x, hp.z) + st.jump;
+    tmpV.copy(hp).sub(prevH).divideScalar(dt); hVel.lerp(tmpV, 1 - Math.exp(-8 * dt)); prevH.copy(hp);
+    const speed = Math.hypot(hVel.x, hVel.z);
+    const tgt = HP[st.poseName];
+    const pl = FAST[st.poseName] || 6;
     for (const k in tgt) pose[k] = damp(pose[k], tgt[k], pl, dt);
-    P.yaw = dampAngle(P.yaw, Math.atan2(st.pLook.x - pp.x, st.pLook.z - pp.z), 4, dt);
-    const fw = pVel.x * Math.sin(P.yaw) + pVel.z * Math.cos(P.yaw);
-    const lat = pVel.x * Math.cos(P.yaw) - pVel.z * Math.sin(P.yaw);
-    const tilt = grounded ? 0 : clamp(fw * 0.05 - pVel.y * 0.035, -0.35, 1.1);
-    P.root.rotation.y = P.yaw;
-    P.body.rotation.set(tilt + pose.pitch + st.pFlip, 0, (grounded ? 0 : clamp(-lat * 0.04, -0.5, 0.5)) + st.pRoll);
-    P.body.position.y = 1.29 + (grounded ? 0 : Math.sin(wallT * 2.2) * 0.08);
-    P.upper.rotation.y = pose.tw;
-    P.armR.sh.rotation.set(pose.shRx, 0, pose.shRz); P.armR.el.rotation.x = pose.elR; P.armR.wr.rotation.x = pose.wrR;
-    P.armL.sh.rotation.set(pose.shLx, 0, pose.shLz); P.armL.el.rotation.x = pose.elL; P.armL.wr.rotation.x = 0;
-    P.legL.hip.rotation.x = pose.hipL; P.legR.hip.rotation.x = pose.hipR; P.legL.kn.rotation.x = pose.knL; P.legR.kn.rotation.x = pose.knR;
-    // Fly aura
-    const air = ss(0.1, 1.2, pp.y);
-    P.auraMat.opacity = 0.45 * air; P.auraMat2.opacity = 0.28 * air;
-    P.ring1.rotation.z += dt * 1.5; P.ring2.rotation.z -= dt * 0.9;
-    P.ring2.scale.setScalar(1 + Math.sin(wallT * 3) * 0.08);
+    H.yaw = dampAngle(H.yaw, Math.atan2(st.hLook.x - hp.x, st.hLook.z - hp.z), 5, dt);
+    H.root.rotation.y = H.yaw;
+    const m = ss(0.4, 2.5, speed) * (st.jump > 0 ? 0 : 1);
+    H.gait += speed * dt * 2.4;
+    const sw = Math.sin(H.gait) * 0.6 * m;
+    const quadness = ss(0.8, 1.4, pose.pitch);
+    const bounce = st.bounce ? Math.abs(Math.sin(wallT * 7)) * 0.1 : 0;
+    H.pelvis.position.y = H.HIP + pose.bob + bounce;
+    H.body.rotation.set(pose.pitch, pose.tw, pose.roll);
+    H.neck.rotation.set(pose.neckX, pose.neckY, 0);
+    H.head.rotation.set(pose.headX + (st.poseName === "graze" ? Math.sin(wallT * 3) * 0.08 : 0), 0, pose.headZ + st.headZ);
+    H.armR.sh.rotation.set(pose.shRx - sw * quadness, 0, pose.shRz); H.armR.el.rotation.set(pose.elRx, 0, pose.elRz);
+    H.armL.sh.rotation.set(pose.shLx + sw * quadness, 0, pose.shLz); H.armL.el.rotation.set(pose.elLx, 0, pose.elLz);
+    H.legR.hip.rotation.x = pose.hipR + sw; H.legR.kn.rotation.x = pose.knR + Math.max(0, sw) * 0.8;
+    H.legL.hip.rotation.x = pose.hipL - sw; H.legL.kn.rotation.x = pose.knL + Math.max(0, -sw) * 0.8;
+    H.tail.rotation.x = 0.35 * (1 - quadness) - 1.1 * quadness + pose.tail * 0.5 + Math.sin(wallT * 3) * 0.08;
+    H.tailSegs.forEach((g, i) => { if (i) g.rotation.set(0.08 + Math.sin(wallT * 2.5 - i * 0.6) * 0.06, 0, Math.sin(wallT * 2 - i * 0.7) * 0.12); });
+    H.maneStrips.forEach((g, i) => { g.rotation.z = Math.sin(wallT * 3 + i * 0.8) * 0.12 + clamp(speed * 0.02, 0, 0.2); });
 
     scene.updateMatrixWorld();
 
-    // dragon head aim
+    // dragon head aim + breath
     dAim.x = damp(dAim.x, st.dAimT.x, st.dAimLam, dt); dAim.y = damp(dAim.y, st.dAimT.y, st.dAimLam, dt); dAim.z = damp(dAim.z, st.dAimT.z, st.dAimLam, dt);
     D.head.quaternion.identity(); qA.identity();
     D.head.lookAt(dAim); qB.copy(D.head.quaternion);
     D.head.quaternion.copy(qA).slerp(qB, 0.85); D.head.updateMatrixWorld(true);
-
-    // dragonfire
-    const m = wp(D.mouth, tmpV3);
+    const mo = wp(D.mouth, tmpV3);
     const fdir = D.head.getWorldDirection(V());
     if (st.firing) {
       const n = Math.ceil(300 * dt);
       for (let i = 0; i < n; i++) {
-        tmpV2.copy(fdir).addScaledVector(randDir(tmpV), 0.13).normalize().multiplyScalar(rnd(19, 26)).add(dVel);
-        fire.spawn(m, tmpV2, rnd(0.75, 1.05), 0.6, 4.4, C.fire0, PRISM[(Math.random() * PRISM.length) | 0], 1.1, 2);
-        if (Math.random() < 0.25) smoke.spawn(m, tmpV2.multiplyScalar(0.6), rnd(1.2, 1.8), 1.2, 5.5, C.ash0, C.ash1, 0.9, 1.5);
+        tmpV2.copy(fdir).addScaledVector(randDir(tmpV), 0.12).normalize().multiplyScalar(rnd(19, 26)).add(dVel);
+        fire.spawn(mo, tmpV2, rnd(0.75, 1.05), 0.6, 4.2, C.fire0, PRISM[(Math.random() * PRISM.length) | 0], 1.1, 1.5);
+        if (Math.random() < 0.2) smoke.spawn(mo, tmpV2.multiplyScalar(0.6), rnd(1.2, 1.8), 1.2, 5.5, C.ash0, C.ash1, 0.9, 1.5);
       }
     }
     D.mouthLight.intensity = damp(D.mouthLight.intensity, st.firing ? 7 + Math.random() * 3 : 0, 12, dt);
     D.glowMat.opacity = damp(D.glowMat.opacity, st.firing ? 0.9 : D.roarT > 0 ? 0.35 : 0, 10, dt);
 
-    // sword: shadow, trail, gather
-    const base = wp(P.bladeBase), tip = wp(P.bladeTip);
-    if (!trInit) { prevTip.copy(tip); trInit = true; }
-    tmpV.copy(tip).sub(prevTip).divideScalar(dt); tipVel.lerp(tmpV, 1 - Math.exp(-20 * dt)); prevTip.copy(tip);
-    const rel = tmpV.copy(tipVel).sub(pVel).length();
-    const swing = ss(5, 16, rel);
-    trPos.copyWithin(6, 0, (TR - 1) * 6); trS.copyWithin(1, 0, TR - 1);
-    trPos[0] = base.x; trPos[1] = base.y; trPos[2] = base.z; trPos[3] = tip.x; trPos[4] = tip.y; trPos[5] = tip.z; trS[0] = swing;
-    for (let i = 0; i < TR; i++) { const a = Math.pow(1 - i / (TR - 1), 1.5) * trS[i]; trA[2 * i] = a * 0.5; trA[2 * i + 1] = a; }
-    trPosAttr.needsUpdate = true; trAAttr.needsUpdate = true;
-
-    const G = st.gather;
-    const nSmoke = Math.ceil((26 + swing * 90 + G * 60) * dt);
-    for (let i = 0; i < nSmoke; i++) {
-      tmpV2.copy(base).lerp(tip, Math.random());
-      smoke.spawn(tmpV2, V(rnd(-0.4, 0.4), rnd(0.2, 0.9), rnd(-0.4, 0.4)), rnd(0.7, 1.2), 0.22, 0.8, C.shade0, C.shade1, 1.5, 0.3);
-      if (Math.random() < 0.45) glow.spawn(tmpV2, V(rnd(-0.3, 0.3), rnd(0.2, 0.8), rnd(-0.3, 0.3)), rnd(0.4, 0.8), 0.14, 0.02, C.violet0, C.violet1, 1, 0);
-    }
-    if (G > 0) {
-      const mid = tmpV3.copy(base).lerp(tip, 0.55);
-      const n = Math.ceil(150 * G * dt);
-      for (let i = 0; i < n; i++) {
-        const p0 = randDir(V()).multiplyScalar(rnd(2.5, 5)).add(mid);
-        const v = mid.clone().sub(p0).multiplyScalar(1.7);
-        glow.spawn(p0, v, 0.6, 0.12, 0.32, [0.35, 0.2, 0.7, 0.3], [0.85, 0.7, 1, 1], 0, 0);
-        if (Math.random() < 0.5) smoke.spawn(p0, v.multiplyScalar(0.9), 0.65, 0.9, 0.3, [0.03, 0.01, 0.06, 0.1], [0.02, 0.01, 0.04, 0.6], 0, 0);
-      }
-    }
-    P.bladeMat.emissiveIntensity = 0.5 + G * 1.8 + swing * 0.6;
-    P.haloMat.opacity = 0.14 + G * 0.3 + swing * 0.1;
-    P.swordLight.intensity = 1.3 + G * 5 + swing * 1.5;
-
-    // Fly aura motes
-    if (air > 0.3) {
-      const n = Math.ceil(24 * dt);
-      for (let i = 0; i < n; i++) {
-        const a = Math.random() * TAU;
-        glow.spawn(tmpV2.set(pp.x + Math.cos(a) * 0.6, pp.y + 0.1, pp.z + Math.sin(a) * 0.6), V(0, -rnd(0.8, 1.6), 0).add(tmpV.copy(pVel).multiplyScalar(0.2)), rnd(0.5, 0.9), 0.12, 0.02, C.aura0, C.aura1, 0.5, 0);
-      }
+    // hoof dust while moving on the ground
+    if (speed > 2 && st.jump === 0 && Math.random() < speed * dt * 2) {
+      const f = Math.random() < 0.5 ? H.legR.foot : H.legL.foot;
+      smoke.spawn(wp(f, tmpV2), V(rnd(-0.5, 0.5), rnd(0.2, 0.8), rnd(-0.5, 0.5)), rnd(0.6, 1), 0.3, 1.2, dust0, dust1, 1.5, 0);
     }
 
-    // one-shot effects
     for (let i = fx.length - 1; i >= 0; i--) {
       const e = fx[i]; e.age += dt; const k = Math.min(1, e.age / e.dur);
       e.update(dt, k);
@@ -1017,22 +996,23 @@
   }
 
   // ---------- camera ----------
-  const cam = { side: 2.75, pitch: 0.1, mix: 0.1, dist: 8.5, yaw: 0, focus: V(6, 2, 10), init: false };
+  const cam = { side: 0, pitch: 0.1, mix: 0.1, dist: 8.5, yaw: 0, focus: V(0, 2, 5), init: false };
   const user = { yaw: 0, pitch: 0, zoom: 1 };
   function updateCamera(dt) {
     const c = cur ? cur.cam : PHASES[0].cam;
-    const pc = pChest(), dc = D.root.position;
-    const sep = pc.distanceTo(dc);
-    const want = c.fixed || clamp(sep * 1.1 + 9, 13, 42) * c.k;
-    const baseYaw = Math.atan2(pc.x - dc.x, pc.z - dc.z);
-    if (!cam.init) { cam.side = c.side; cam.pitch = c.pitch; cam.mix = c.mix; cam.dist = want; }
-    cam.side = dampAngle(cam.side, c.side, 0.9, dt);
+    const hc = H.root.position.clone().add(V(0, 2.0, 0)), dc = D.root.position;
+    const sep = hc.distanceTo(dc);
+    const want = c.fixed || clamp(sep * 1.0 + 7, 10, 36) * c.k;
+    const baseYaw = c.abs !== undefined ? 0 : Math.atan2(hc.x - dc.x, hc.z - dc.z);
+    const side = c.abs !== undefined ? c.abs : c.side;
+    if (!cam.init) { cam.side = side; cam.pitch = c.pitch; cam.mix = c.mix; cam.dist = want; }
+    cam.side = dampAngle(cam.side, side, 0.9, dt);
     cam.pitch = damp(cam.pitch, c.pitch, 1.2, dt);
     cam.mix = damp(cam.mix, c.mix, 1.2, dt);
     cam.dist = damp(cam.dist, want, 1.2, dt);
     const yawT = baseYaw + cam.side + user.yaw;
     cam.yaw = cam.init ? dampAngle(cam.yaw, yawT, 1.6, dt) : yawT;
-    const f = pc.clone().lerp(dc, cam.mix); f.y += cam.mix < 0.2 ? 0.2 : 0.5;
+    const f = hc.clone().lerp(dc, cam.mix); f.y += 0.3;
     if (!cam.init) cam.focus.copy(f); else cam.focus.lerp(f, 1 - Math.exp(-3 * dt));
     cam.init = true;
     const pitch = clamp(cam.pitch + user.pitch, -0.35, 1.3);
@@ -1042,7 +1022,7 @@
       cam.focus.y + Math.sin(pitch) * d,
       cam.focus.z + Math.cos(cam.yaw) * Math.cos(pitch) * d
     );
-    camera.position.y = Math.max(camera.position.y, groundH(camera.position.x, camera.position.z) + 1.2);
+    camera.position.y = Math.max(camera.position.y, groundH(camera.position.x, camera.position.z) + 0.8);
     shake = damp(shake, 0, 3.5, dt);
     if (shake > 0.01) camera.position.add(randDir(tmpV).multiplyScalar(shake * 0.5));
     camera.lookAt(cam.focus);

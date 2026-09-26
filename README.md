@@ -23,4 +23,5 @@ Feel free to explore, download, or adapt the reports.
 
 ## Other projects
 
-- [The Glory Paladin vs. the Red Dragon](paladin-dragon/) – a three.js 3D animation of an orc paladin under a *Fly* spell fighting a red dragon with a shadow longsword.
+- [The Glory Paladin vs. the Opal Dragon](paladin-dragon/) – a three.js 3D animation of an orc paladin under a *Fly* spell fighting an opalescent dragon with a shadow longsword ([video](videos/paladin-vs-opal-dragon.mp4)).
+- [The Warhorse vs. the Opal Dragon](warhorse-dragon/) – the paladin's warhorse stands up on his hind legs and fights the same dragon ([video](videos/warhorse-vs-opal-dragon.mp4)).
