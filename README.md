@@ -20,3 +20,7 @@ Each file is a standalone `.pbix` report focused on a specific data scenario and
 
 
 Feel free to explore, download, or adapt the reports.
+
+## Other projects
+
+- [The Glory Paladin vs. the Red Dragon](paladin-dragon/) – a three.js 3D animation of an orc paladin under a *Fly* spell fighting a red dragon with a shadow longsword.
