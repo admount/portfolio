@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Eternal Loaf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=UnifrakturMaguntia&display=swap">
+<style>
+/* Layout: a scriptorium ledger. Three columns of rubricated accounts that grow as the game reveals itself; one column on phones. */
+:root {
+  --vellum: #e7e4da;
+  --vellum-deep: #dbd6c7;
+  --ink: #221c17;
+  --ink-soft: #5f564b;
+  --woad: #26457a;
+  --woad-ink: #f1eee6;
+  --madder: #8c2234;
+  --gold: #946f1c;
+  --rule: #b7ae9a;
+  --display: 'UnifrakturMaguntia', 'Old English Text MT', 'Goudy Text', serif;
+  --body: 'Alegreya', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --sc: 'Alegreya SC', 'Alegreya', 'Palatino Linotype', Georgia, serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --vellum: #15161b; --vellum-deep: #1e1f26; --ink: #e8e1d1; --ink-soft: #a59c8b;
+    --woad: #88a8e0; --woad-ink: #121318; --madder: #e0808e; --gold: #d8b15a; --rule: #3a3a45;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --vellum: #15161b; --vellum-deep: #1e1f26; --ink: #e8e1d1; --ink-soft: #a59c8b;
+  --woad: #88a8e0; --woad-ink: #121318; --madder: #e0808e; --gold: #d8b15a; --rule: #3a3a45;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--vellum); color: var(--ink); }
+body { margin: 0; font-family: var(--body); font-size: 17px; line-height: 1.45; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; }
+
+.mast { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+.title { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.title .initial { color: var(--madder); }
+.count { margin: 0; font-size: clamp(1.4rem, 4vw, 2rem); font-variant-numeric: tabular-nums; }
+.count .unit { font-family: var(--sc); font-size: .55em; color: var(--ink-soft); letter-spacing: .06em; }
+
+.chronicle { border-bottom: 1px solid var(--rule); padding-block: 10px 8px; min-height: 3.2em; }
+.chronicle p { margin: 0; font-style: italic; font-size: 1.05rem; }
+.chronicle p::before, .chronicle li::before { content: '¶ '; color: var(--madder); font-style: normal; }
+.chronicle ol { list-style: none; margin: 4px 0 0; padding: 0; color: var(--ink-soft); font-size: .88rem; max-height: 0; overflow: hidden; transition: max-height .3s; }
+.chronicle.open ol { max-height: 14em; overflow-y: auto; }
+.chron-toggle { background: none; border: 0; padding: 0; font: inherit; font-family: var(--sc); font-size: .75rem; letter-spacing: .08em; color: var(--woad); cursor: pointer; margin-top: 4px; }
+
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 8px 36px; align-items: start; margin-top: 8px; }
+.col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+section { padding-block: 12px 10px; min-width: 0; }
+h2 { font-family: var(--sc); font-weight: 700; font-size: 1.05rem; letter-spacing: .09em; color: var(--madder); margin: 0 0 8px; border-bottom: 1px solid var(--rule); padding-bottom: 3px; }
+h2 .sub { font-family: var(--body); font-weight: 400; font-style: italic; letter-spacing: 0; color: var(--ink-soft); font-size: .85rem; }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-block: 2px; flex-wrap: wrap; }
+.row .k { color: var(--ink-soft); }
+.row .v { font-variant-numeric: tabular-nums; font-weight: 500; text-align: right; }
+.row.act { align-items: center; margin-top: 4px; }
+.num { font-variant-numeric: tabular-nums; }
+.note { font-size: .85rem; color: var(--ink-soft); font-style: italic; margin: 4px 0 0; }
+.gold { color: var(--gold); }
+.warn { color: var(--madder); }
+
+.btn { font-family: var(--sc); font-weight: 500; font-size: .92rem; letter-spacing: .04em; color: var(--ink); background: transparent; border: 1px solid var(--ink); border-radius: 2px; padding: .28em .75em; cursor: pointer; transition: background .12s, color .12s; font-variant-numeric: tabular-nums; }
+.btn:hover:not(:disabled) { background: var(--woad); border-color: var(--woad); color: var(--woad-ink); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .38; cursor: default; }
+.btn:focus-visible, .proj:focus-visible, .chron-toggle:focus-visible { outline: 2px solid var(--woad); outline-offset: 2px; }
+.btn.sm { padding: .1em .55em; font-size: .85rem; min-width: 2em; }
+.btn.on { background: var(--ink); color: var(--vellum); }
+.bake { font-size: 1.25rem; padding: .5em 1.4em; background: var(--woad); color: var(--woad-ink); border-color: var(--woad); width: 100%; }
+.bake:hover:not(:disabled) { filter: brightness(1.1); }
+.price { display: inline-flex; align-items: center; gap: 6px; }
+
+.proj-list { display: flex; flex-direction: column; gap: 8px; }
+.proj { display: block; width: 100%; text-align: left; font: inherit; color: var(--ink); background: var(--vellum-deep); border: 1px solid var(--rule); border-radius: 2px; padding: 8px 10px; cursor: pointer; }
+.proj:hover:not(:disabled) { border-color: var(--woad); }
+.proj:disabled { opacity: .5; cursor: default; }
+.proj .pt { font-family: var(--sc); font-weight: 700; letter-spacing: .03em; display: block; }
+.proj .pc { font-style: italic; font-size: .85rem; color: var(--gold); font-variant-numeric: tabular-nums; }
+.proj .pd { display: block; font-size: .9rem; color: var(--ink-soft); margin-top: 2px; }
+.empty { font-style: italic; color: var(--ink-soft); font-size: .9rem; margin: 0; }
+
+.crucibles { display: flex; flex-wrap: wrap; gap: 6px; margin-block: 6px; }
+.cru { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--ink-soft); background: var(--gold); }
+
+.bq { display: inline-flex; gap: 4px; }
+.grid-b { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; margin-top: 6px; }
+.grid-b .n { font-variant-numeric: tabular-nums; text-align: right; font-weight: 500; }
+.bar { height: 6px; background: var(--vellum-deep); border: 1px solid var(--rule); margin: 4px 0 6px; }
+.bar > i { display: block; height: 100%; background: var(--madder); width: 0; }
+.alloc { display: grid; grid-template-columns: 1fr auto 2.2em auto; gap: 3px 8px; align-items: center; margin-top: 6px; }
+.alloc .n { text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+.ending { border: 2px solid var(--ink); padding: 16px 18px; background: var(--vellum-deep); }
+.ending p { max-width: 60ch; }
+
+footer { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; font-size: .85rem; color: var(--ink-soft); }
+footer .btn { font-size: .8rem; }
+@media (max-width: 480px) { body { font-size: 16px; } .wrap { padding-inline: 16px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <h1 class="title"><span class="initial">T</span>he Eternal Loaf</h1>
+    <p class="count"><span id="loaves">0</span> <span class="unit">loaves baked</span></p>
+  </header>
+
+  <div class="chronicle" id="chronicle">
+    <p id="chron-now">A cold oven, a sack of flour, and a stall in the market square.</p>
+    <ol id="chron-log"></ol>
+    <button class="chron-toggle" id="chron-toggle" type="button">Read the chronicle</button>
+  </div>
+
+  <main class="cols">
+    <div class="col">
+      <section id="s-bake">
+        <button class="btn bake" id="b-bake" type="button">Bake a Loaf</button>
+      </section>
+
+      <section id="s-market">
+        <h2>The Market Stall</h2>
+        <div class="row"><span class="k">Silver</span><span class="v" id="silver">0.00</span></div>
+        <div class="row"><span class="k">Unsold loaves</span><span class="v" id="unsold">0</span></div>
+        <div class="row"><span class="k">Price per loaf</span>
+          <span class="price"><button class="btn sm" id="b-down" type="button" aria-label="Lower price">−</button><span class="v" id="price">0.25</span><button class="btn sm" id="b-up" type="button" aria-label="Raise price">+</button></span></div>
+        <div class="row"><span class="k">Public demand</span><span class="v" id="demand">0%</span></div>
+        <div class="row"><span class="k">Loaves sold per second</span><span class="v" id="sold-rate">0</span></div>
+        <div id="crier-box" hidden>
+          <div class="row act"><span class="k">Town crier, level <span id="crier" class="num">1</span></span>
+            <button class="btn" id="b-crier" type="button">Pay the crier</button></div>
+        </div>
+      </section>
+
+      <section id="s-work">
+        <h2>The Bakehouse</h2>
+        <div class="row"><span class="k">Loaves per second</span><span class="v" id="bake-rate">0</span></div>
+        <div class="row"><span class="k">Flour</span><span class="v"><span id="flour">1,000</span> measures</span></div>
+        <div class="row act"><span class="k">Miller's price: <span id="flour-price" class="num">20</span> silver a sack</span>
+          <button class="btn" id="b-flour" type="button">Buy a sack</button></div>
+        <div class="row" id="broker-box" hidden><span class="k">Flour broker buys for you</span>
+          <button class="btn sm" id="b-broker" type="button">On</button></div>
+        <div id="appr-box" hidden>
+          <div class="row act"><span class="k">Apprentices: <span class="num" id="appr">0</span></span>
+            <button class="btn" id="b-appr" type="button">Hire</button></div>
+        </div>
+        <div id="master-box" hidden>
+          <div class="row act"><span class="k">Master bakers: <span class="num" id="masters">0</span></span>
+            <button class="btn" id="b-master" type="button">Hire</button></div>
+        </div>
+      </section>
+
+      <section id="s-realm" hidden>
+        <h2>The Realm <span class="sub">every field answers to the bakehouse</span></h2>
+        <div class="row"><span class="k">Unreaped fields</span><span class="v"><span id="fields">0</span></span></div>
+        <div class="bar" aria-hidden="true"><i id="fields-bar"></i></div>
+        <div class="row"><span class="k">Grain in the barns</span><span class="v" id="grain">0</span></div>
+        <div class="row"><span class="k">Flour in the bins</span><span class="v" id="meal">0</span></div>
+        <div class="row"><span class="k">Loaves per second</span><span class="v" id="r-rate">0</span></div>
+        <div class="row"><span class="k">Loaves in the stores</span><span class="v gold" id="stock">0</span></div>
+        <h2 style="margin-top:12px">Faith</h2>
+        <div class="row"><span class="k">Kindled / demanded per second</span><span class="v"><span id="faith-p">0</span> / <span id="faith-u">0</span></span></div>
+        <div class="row"><span class="k">Held in reliquaries</span><span class="v"><span id="faith-s">0</span> / <span id="faith-c">0</span></span></div>
+        <div class="row"><span class="k">The peasants work at</span><span class="v" id="eff">100%</span></div>
+        <div class="row act"><span class="k">Build in lots of</span>
+          <span class="bq"><button class="btn sm on" data-q="1" type="button">1</button><button class="btn sm" data-q="10" type="button">10</button><button class="btn sm" data-q="100" type="button">100</button></span></div>
+        <div class="grid-b" id="realm-grid"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section id="s-guild" hidden>
+        <h2>The Bakers' Guild</h2>
+        <div class="row"><span class="k">Favor with the guild</span><span class="v gold" id="favor">2</span></div>
+        <div class="row"><span class="k">Next favor at</span><span class="v"><span id="favor-next">3,000</span> loaves</span></div>
+        <div class="row act"><span class="k">Scribes: <span class="num" id="scribes">1</span> <span class="note">(wisdom speed)</span></span>
+          <button class="btn sm" id="b-scribe" type="button">+ Scribe</button></div>
+        <div class="row act"><span class="k">Scrolls: <span class="num" id="scrolls">1</span> <span class="note">(wisdom held)</span></span>
+          <button class="btn sm" id="b-scroll" type="button">+ Scroll</button></div>
+        <div class="row"><span class="k">Unspent favor</span><span class="v" id="favor-free">0</span></div>
+        <div class="row"><span class="k">Wisdom</span><span class="v"><span id="wisdom">0</span> / <span id="wcap">1,000</span></span></div>
+        <div class="row" id="insp-row" hidden><span class="k">Inspiration</span><span class="v" id="insp">0</span></div>
+        <p class="note" id="insp-note" hidden>Inspiration comes only while your scrolls are full of wisdom.</p>
+      </section>
+
+      <section id="s-cruc" hidden>
+        <h2>The Alchemist's Crucibles</h2>
+        <div class="crucibles" id="crucibles"></div>
+        <div class="row act"><span class="k">Draws <span id="cru-gain" class="num">0</span> wisdom now</span>
+          <button class="btn" id="b-channel" type="button">Channel the aether</button></div>
+        <div class="row act"><span class="k">Crucibles: <span class="num" id="cru-n">0</span> of 10</span>
+          <button class="btn" id="b-cru" type="button">Fire another</button></div>
+        <p class="note">Channel while the crucibles glow gold. Channel while they go dark and wisdom drains away.</p>
+      </section>
+
+      <section id="s-proj" hidden>
+        <h2>Edicts &amp; Discoveries</h2>
+        <div class="proj-list" id="proj-list"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section id="s-vent" hidden>
+        <h2>The Counting House</h2>
+        <div class="row"><span class="k">Silver in the venture chest</span><span class="v gold" id="chest">0.00</span></div>
+        <div class="row"><span class="k">Last minute</span><span class="v" id="chest-delta">—</span></div>
+        <div class="row act"><span class="k">Ventures</span>
+          <span class="bq"><button class="btn sm" data-risk="0" type="button">Safe</button><button class="btn sm on" data-risk="1" type="button">Bold</button><button class="btn sm" data-risk="2" type="button">Reckless</button></span></div>
+        <div class="row act"><span class="k">Move silver</span>
+          <span class="bq"><button class="btn sm" id="b-dep" type="button">Deposit all</button><button class="btn sm" id="b-wd" type="button">Withdraw all</button></span></div>
+        <div class="row act"><span class="k">Ledger craft, level <span class="num" id="vent-lvl">1</span></span>
+          <button class="btn sm" id="b-vlvl" type="button">Improve</button></div>
+        <p class="note" id="vent-note">Safe ventures rarely lose. Reckless ones sometimes sink.</p>
+      </section>
+
+      <section id="s-voyage" hidden>
+        <h2>The Great Voyage <span class="sub">beyond the edge of the map</span></h2>
+        <div class="row"><span class="k">World discovered</span><span class="v" id="explored">0%</span></div>
+        <div class="bar" aria-hidden="true"><i id="explored-bar"></i></div>
+        <div class="row"><span class="k">Arks at sea</span><span class="v" id="arks">0</span></div>
+        <div class="row"><span class="k">Heretic arks</span><span class="v warn" id="heretics">0</span></div>
+        <div class="row"><span class="k">Colony bakehouses / reapers</span><span class="v"><span id="c-bake">0</span> / <span id="c-reap">0</span></span></div>
+        <div class="row"><span class="k">Lost to storms / heretics slain</span><span class="v"><span id="lost">0</span> / <span id="slain">0</span></span></div>
+        <div class="row"><span class="k">Honor</span><span class="v gold"><span id="honor">0</span> <span class="note">(next zeal at <span id="honor-next">0</span>)</span></span></div>
+        <div class="row act"><span class="k">Launch from your stores</span>
+          <button class="btn" id="b-ark" type="button">Launch an ark</button></div>
+        <div class="row act"><span class="k">Zeal: <span class="num" id="zeal-used">0</span> of <span class="num" id="zeal">0</span></span>
+          <button class="btn sm" id="b-oath" type="button">Swear an oath</button></div>
+        <div class="alloc" id="alloc"></div>
+      </section>
+
+      <section id="s-last" hidden>
+        <h2>The Last Loaves</h2>
+        <p class="note">Everything that was is now bread, save a little flour swept from the rubble.</p>
+        <div class="row"><span class="k">Flour remaining</span><span class="v" id="last-flour">0</span></div>
+        <button class="btn bake" id="b-last" type="button">Bake</button>
+      </section>
+
+      <section id="s-end" hidden>
+        <div class="ending">
+          <h2>Finis</h2>
+          <p>The last loaf cools on the last stone. There is no field left to reap, no ark left to sail, no scribe left to write it down. There is only bread, <span id="end-total" class="num">0</span> loaves of it, stretching past every horizon.</p>
+          <p>It is very good bread.</p>
+          <p class="note">Worlds consumed: <span id="end-ng">1</span>. Begin anew and your bread will be a little more beloved.</p>
+          <button class="btn bake" id="b-anew" type="button">Begin anew</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <span>Time at the oven: <span id="played" class="num">0m</span><span id="ng-note"></span></span>
+    <span><span id="saved">Saved automatically</span> · <button class="btn sm" id="b-reset" type="button">Start over</button></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+// ---------- Numbers ----------
+const BIG = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quattuordecillion', 'quindecillion', 'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'];
+function fmt(n, dec) {
+  if (!isFinite(n)) return '∞';
+  dec = dec || 0;
+  const a = Math.abs(n);
+  if (a < 1e6) return n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  const e = Math.floor(Math.log10(a) / 3);
+  if (e >= BIG.length) return n.toExponential(3);
+  return (n / Math.pow(10, e * 3)).toFixed(3) + ' ' + BIG[e];
+}
+const fmtS = n => fmt(n, Math.abs(n) < 1e6 ? 2 : 0);
+function fmtRate(n) { return n > 0 && n < 10 ? n.toFixed(1) : fmt(n); }
+function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+// ---------- Constants ----------
+const REALM = 1e13;          // measures of grain in the kingdom's fields
+const WORLD = 2.5e21;        // measures of grain in the whole world
+const ARK_COST = 1e11;       // loaves to build one ark
+const ZEAL_STATS = [
+  ['sp', 'Swift sails', 'arks cross the sea faster'],
+  ['ex', 'Cartography', 'each voyage charts more land'],
+  ['rep', 'Shipwrights', 'arks build new arks'],
+  ['haz', 'Seaworthiness', 'fewer arks lost to storms'],
+  ['fac', 'Bakehouses', 'colonies raise bakehouses'],
+  ['harv', 'Reapers', 'colonies send out reapers'],
+  ['cmb', 'Crusade', 'arks fight the heretics'],
+];
+const BUILD = {
+  chapels:    { name: 'Chapels',     base: 5e6, g: 1.1,  desc: 'kindle faith' },
+  reliqs:     { name: 'Reliquaries', base: 1e7, g: 1.15, desc: 'store 50,000 faith' },
+  reapers:    { name: 'Reapers',     base: 1e6, g: 1.1,  desc: 'reap the fields' },
+  millers:    { name: 'Millers',     base: 1e6, g: 1.1,  desc: 'grind grain to flour' },
+  bakehouses: { name: 'Bakehouses',  base: 1e7, g: 1.12, desc: 'bake flour to loaves' },
+};
+const RR = 5e5, MR = 5e5, BR = 5e6; // base rates per reaper, miller, bakehouse
+const FAITH_USE = { reapers: 1, millers: 1, bakehouses: 20 };
+const FAITH_PER_CHAPEL = 30, FAITH_PER_RELIQ = 50000;
+
+// ---------- State ----------
+let S;
+function fresh(ng) {
+  const cr = [];
+  for (let i = 0; i < 10; i++) cr.push([0.6 + Math.random() * 1.4, Math.random() * 6.28]);
+  return {
+    v: 1, ng: ng || 0, phase: 1, t: 0, flags: {}, done: {}, log: [],
+    loaves: 0, unsold: 0, silver: 0, price: 0.25, salesAcc: 0, prodAcc: 0, soldRate: 0, bakeRateObs: 0,
+    flour: 1000, flourBase: 20, flourPrice: 20, flourBought: 0, sack: 1000, brokerOn: true,
+    appr: 0, apprMult: 1, masters: 0, masterMult: 1, crier: 1, demandMult: 1,
+    favor: 2, fibA: 2, fibB: 3, scribes: 1, scrolls: 1, wisdom: 0, insp: 0, inspOn: false, maxedOnce: false,
+    vent: { chest: 0, risk: 1, lvl: 1, hist: [] }, cruN: 0, cru: cr,
+    fields: 0, grain: 0, meal: 0, stock: 0, realmRate: 0,
+    chapels: 0, reliqs: 0, reapers: 0, millers: 0, bakehouses: 0, faith: 0, eff: 1, faithP: 0, faithU: 0,
+    rMult: 1, mMult: 1, bMult: 1, cMult: 1,
+    explored: 0, arks: 0, heretics: 0, honor: 0, honorNext: 500, zeal: 0, oaths: 0,
+    alloc: { sp: 0, ex: 0, rep: 0, haz: 0, fac: 0, harv: 0, cmb: 0 },
+    expMult: 1, repMult: 1, cmbMult: 1, cBake: 0, cReap: 0, lost: 0, slain: 0,
+    lastFlour: 0, ended: false, played: 0,
+  };
+}
+const ngMult = () => Math.pow(1.1, S.ng);
+
+function say(msg) {
+  S.log.unshift(msg);
+  if (S.log.length > 40) S.log.length = 40;
+  dirtyLog = true;
+}
+
+// ---------- Phase I: the stall ----------
+const demand = () => 0.8 / S.price * Math.pow(1.35, S.crier - 1) * S.demandMult * ngMult();
+const salesRate = () => 4 * Math.pow(demand(), 1.3);
+const bakeRate = () => (S.appr * S.apprMult + S.masters * 500 * S.masterMult) * ngMult();
+const apprCost = () => Math.pow(1.1, S.appr) + 5;
+const masterCost = () => 1000 * Math.pow(1.07, S.masters);
+const crierCost = () => 100 * Math.pow(1.8, S.crier - 1);
+const flourCost = () => Math.round(S.flourPrice);
+
+function bakeOne() {
+  if (S.phase !== 1 || S.flour < 1) return;
+  S.flour -= 1; S.loaves += 1; S.unsold += 1;
+}
+function buyFlour() {
+  const c = flourCost();
+  if (S.silver < c) return false;
+  S.silver -= c; S.flour += S.sack; S.flourBought++; S.flourBase += 0.2;
+  return true;
+}
+function tickMarket(dt) {
+  const want = bakeRate() * dt + S.prodAcc;
+  let n = Math.floor(want);
+  S.prodAcc = want - n;
+  if (n > S.flour) { n = Math.floor(S.flour); S.prodAcc = 0; }
+  S.flour -= n; S.loaves += n; S.unsold += n;
+  S.bakeRateObs += (n / dt - S.bakeRateObs) * Math.min(1, dt);
+
+  S.flourBase = 20 + (S.flourBase - 20) * Math.exp(-0.05 * dt);
+  S.flourPrice = Math.max(5, S.flourBase + 5 * Math.sin(S.t * 0.31) + 2.5 * Math.sin(S.t * 1.17));
+  if (S.flour < 1 && S.unsold < 1 && S.silver < flourCost() && S.t - (S.creditAt || -99) > 20) {
+    S.creditAt = S.t; S.flour += S.sack;
+    say('The miller sighs and leaves a sack of flour at your door. On credit, he says. He will not ask again.');
+  }
+  if (S.done.broker && S.brokerOn) {
+    const need = bakeRate() * 2;
+    let k = 0;
+    while (S.flour < need && k < 200 && buyFlour()) k++;
+  }
+
+  S.salesAcc += salesRate() * dt * (0.6 + 0.8 * Math.random());
+  let s = Math.floor(S.salesAcc);
+  S.salesAcc -= s;
+  if (s > S.unsold) { s = Math.floor(S.unsold); S.salesAcc = 0; }
+  S.unsold -= s; S.silver += s * S.price;
+  S.soldRate += (s / dt - S.soldRate) * Math.min(1, dt * 0.7);
+
+  if (S.done.counting && S.vent.chest > 0) {
+    const r = ventRisk();
+    S.vent.chest *= Math.exp(r.mu * dt + r.sigma * Math.sqrt(dt) * gauss());
+  }
+}
+function ventRisk() {
+  const lv = 1 + 0.2 * (S.vent.lvl - 1);
+  return [{ mu: 0.0003 * lv, sigma: 0.0015 }, { mu: 0.0007 * lv, sigma: 0.006 }, { mu: 0.0012 * lv, sigma: 0.016 }][S.vent.risk];
+}
+const ventLvlCost = () => Math.round(2000 * Math.pow(1.5, S.vent.lvl - 1));
+
+// ---------- The guild ----------
+const wcap = () => S.scrolls * 1000;
+const wisRate = () => S.scribes * 12;
+const inspRate = () => 0.5 * (1 + Math.log2(Math.max(1, S.scribes)) + 0.3 * Math.pow(S.scribes, 1.1));
+const freeFavor = () => S.favor - S.scribes - S.scrolls;
+const cruCost = () => 5000 + 2500 * S.cruN;
+function cruSum() {
+  let s = 0;
+  for (let i = 0; i < S.cruN; i++) s += Math.sin(S.t * S.cru[i][0] + S.cru[i][1]);
+  return s;
+}
+const cruGain = () => Math.round(cruSum() * 40 * (1 + S.scribes / 4));
+function tickGuild(dt) {
+  if (!S.flags.guild || S.ended) return;
+  const cap = wcap();
+  if (S.wisdom < cap) S.wisdom = Math.min(cap, S.wisdom + wisRate() * dt);
+  else if (S.wisdom > cap) S.wisdom = cap + (S.wisdom - cap) * Math.exp(-0.08 * dt);
+  if (S.wisdom >= cap && S.scrolls > 0) {
+    S.maxedOnce = true;
+    if (S.inspOn && S.scribes > 0) S.insp += inspRate() * dt;
+  }
+}
+function checkFavor() {
+  while (S.loaves >= S.fibB * 1000) {
+    S.favor++;
+    const b = S.fibA + S.fibB; S.fibA = S.fibB; S.fibB = b;
+    if (S.flags.guild) say('The guild grants you favor. You have ' + S.favor + '.');
+  }
+}
+
+// ---------- Phase II: the realm ----------
+function buildCost(key, qty) {
+  const b = BUILD[key]; let c = 0; const n0 = S[key];
+  for (let i = 0; i < qty; i++) c += b.base * Math.pow(b.g, n0 + i);
+  return c;
+}
+function build(key, qty) {
+  const c = buildCost(key, qty);
+  if (S.stock < c) return;
+  S.stock -= c; S[key] += qty;
+}
+function tickRealm(dt) {
+  const ng = ngMult();
+  S.faithP = S.chapels * FAITH_PER_CHAPEL * S.cMult;
+  S.faithU = S.reapers * FAITH_USE.reapers + S.millers * FAITH_USE.millers + S.bakehouses * FAITH_USE.bakehouses;
+  const avail = S.faithP * dt + S.faith, need = S.faithU * dt;
+  S.eff = need <= 0 ? 1 : Math.min(1, avail / need);
+  S.faith = Math.min(S.reliqs * FAITH_PER_RELIQ, Math.max(0, avail - need));
+  const reapers = S.reapers * S.eff + S.cReap, millers = S.millers * S.eff + S.cReap, bakers = S.bakehouses * S.eff + S.cBake;
+  const reap = Math.min(S.fields, reapers * RR * S.rMult * ng * dt);
+  S.fields -= reap; S.grain += reap;
+  const grind = Math.min(S.grain, millers * MR * S.mMult * ng * dt);
+  S.grain -= grind; S.meal += grind;
+  const bake = Math.min(S.meal, bakers * BR * S.bMult * ng * dt);
+  S.meal -= bake; S.loaves += bake; S.stock += bake;
+  S.realmRate += (bake / dt - S.realmRate) * Math.min(1, dt);
+  if (S.fields < 1) S.fields = 0;
+  if (S.grain < 1) S.grain = 0;
+  if (S.meal < 1) S.meal = 0;
+}
+
+// ---------- Phase III: the voyage ----------
+const zealUsed = () => Object.values(S.alloc).reduce((a, b) => a + b, 0);
+const oathCost = () => Math.round(40 * Math.pow(1.45, S.oaths));
+function tickVoyage(dt) {
+  const A = S.arks, al = S.alloc;
+  if (A > 0 && S.explored < WORLD) {
+    const add = Math.min(WORLD - S.explored, A * 2e8 * (1 + al.sp) * (1 + al.ex) * S.expMult * dt);
+    S.explored += add; S.fields += add;
+    if (WORLD - S.explored < 1) S.explored = WORLD;
+  }
+  if (A > 0) {
+    S.arks += A * al.rep * 0.0008 * S.repMult * dt;
+    const loss = A * 0.004 * Math.pow(0.65, al.haz) * dt;
+    S.arks -= loss; S.lost += loss;
+    if (A > 5000) {
+      if (!S.flags.heresy) { S.flags.heresy = true; say('Word comes from far waters: some ark crews have renounced the Loaf. They call themselves the Unleavened, they build ships of their own, and they are arming.'); }
+      S.heretics += A * 0.0002 * dt;
+    }
+    S.cBake += A * al.fac * 0.002 * dt;
+    S.cReap += A * al.harv * 0.02 * dt;
+  }
+  if (S.heretics > 0) {
+    const c = al.cmb * S.cmbMult, H = S.heretics;
+    S.heretics = Math.min(1e30, H + H * (0.004 + 0.012 * S.explored / WORLD) * dt);
+    if (S.arks > 0) {
+      const dH = Math.min(S.heretics, H * 0.003 * c * Math.min(1, S.arks / H) * dt);
+      const dA = Math.min(S.arks, H * 0.01 / (1 + 0.5 * c) * dt);
+      S.heretics -= dH; S.slain += dH; S.honor += dH;
+      S.arks -= dA; S.lost += dA;
+    }
+    if (S.heretics < 0.5) S.heretics = 0;
+  }
+  if (S.arks < 0.5) S.arks = 0;
+  if (S.arks === 0 && S.stock < ARK_COST && !S.flags.endgame) {
+    S.driftT = (S.driftT || 0) + dt;
+    if (S.driftT > 30) { S.driftT = 0; S.arks = 1; say('With no fleet left, the shipwrights lash together an ark from driftwood and old bread crates. It floats.'); }
+  } else S.driftT = 0;
+  while (S.honor >= S.honorNext) {
+    S.zeal++; S.honorNext = Math.round(S.honorNext * 2);
+    say('Honor won in battle stirs the fleet. Zeal rises to ' + S.zeal + '.');
+  }
+  if (!S.flags.endgame && S.explored >= WORLD && S.fields === 0 && S.grain === 0 && S.meal === 0) {
+    S.flags.endgame = true;
+    say('There is no unreaped field anywhere in the world. Every grain has been baked. Only your own works remain.');
+  }
+}
+
+// ---------- Projects ----------
+// cost keys: w wisdom, i inspiration, s silver, l loaves from the stores
+const P = [];
+function proj(id, title, desc, cost, req, fx, msg) { P.push({ id, title, desc, cost, req, fx, msg }); }
+const d = id => !!S.done[id];
+const wealth = () => S.silver + S.vent.chest;
+
+proj('knead', 'Better Kneading', 'Apprentices bake 25% faster.', { w: 750 }, () => S.appr >= 1, () => S.apprMult += 0.25, 'The apprentices learn to fold the dough, not beat it.');
+proj('sift', 'Sifting Screens', 'Each sack of flour stretches 50% further.', { w: 1750 }, () => S.flourBought >= 1, () => S.sack *= 1.5, 'Less bran, less waste.');
+proj('contemplate', 'Contemplation', 'When your scrolls are full, the scribes begin to have ideas of their own.', { w: 1000 }, () => S.maxedOnce || S.favor >= 5, () => S.inspOn = true, 'The scribes stare out the window. It turns out that counts as work.');
+proj('ditty', 'A Tavern Ditty', 'Demand for your bread rises by a quarter.', { i: 10 }, () => S.inspOn, () => S.demandMult *= 1.25, '"There once was a baker named..." It catches on.');
+proj('honey', 'Honey Glaze', 'Apprentices bake 50% faster.', { w: 2500 }, () => d('knead'), () => S.apprMult += 0.5, 'The glaze makes the crust shine. Customers linger.');
+proj('hearth', 'Stone Hearths', 'Apprentices bake 75% faster.', { w: 5000 }, () => d('honey'), () => S.apprMult += 0.75, 'The new hearths hold heat through the night.');
+proj('mill', 'Fine Milling', 'Each sack of flour stretches 75% further.', { w: 3500 }, () => d('sift'), () => S.sack *= 1.75, 'The miller grinds finer. You do not ask how.');
+proj('broker', 'Hire a Flour Broker', 'A broker buys flour whenever your bins run low.', { w: 7000 }, () => S.flourBought >= 15, () => { S.brokerOn = true; }, 'The broker takes a cut. The broker is worth it.');
+proj('crier2', 'Hear Ye, Hear Ye', 'A new cry for the town crier. Demand rises by half.', { w: 2500, i: 25 }, () => S.crier >= 2 && S.inspOn, () => S.demandMult *= 1.5, '"Bread fit for a bishop, priced for a beggar!"');
+proj('ballad', "The Baker's Ballad", 'Minstrels sing of your loaves. Demand doubles.', { w: 4500, i: 45 }, () => d('crier2'), () => S.demandMult *= 2, 'Three verses. Children know all of them.');
+proj('manuscript', 'An Illuminated Manuscript', 'A gift to the guild masters. +1 favor.', { i: 50 }, () => S.inspOn, () => S.favor += 1, 'Gold leaf on every capital. The masters are pleased.');
+proj('lute', 'A Lute Composition', 'Another gift. +1 favor.', { i: 100 }, () => d('manuscript'), () => S.favor += 1, 'It is in a mode nobody has heard before.');
+proj('sphinx', 'The Riddle of the Sphinx', 'Solve what the philosophers could not. +1 favor.', { i: 150 }, () => d('lute'), () => S.favor += 1, 'The answer was bread. It is usually bread.');
+proj('humours', 'A Treatise on the Humours', 'Bread, it turns out, balances all four. +1 favor.', { i: 200 }, () => d('sphinx'), () => S.favor += 1, 'Physicians begin prescribing your rye.');
+proj('geometry', 'Sacred Geometry', 'Prove the perfect loaf is a circle. +1 favor.', { i: 250 }, () => d('humours'), () => S.favor += 1, 'The proof is eleven pages. The masons weep.');
+proj('masters', "The Masters' Charter", 'Hire master bakers, each worth five hundred apprentices.', { w: 9000 }, () => S.appr >= 40, () => {}, 'The charter is sealed in red wax. The masters arrive with their own knives.');
+proj('m2', 'Guild Ovens', 'Master bakers work 25% faster.', { w: 14000 }, () => S.masters >= 1, () => S.masterMult += 0.25, 'Twelve ovens, one chimney.');
+proj('m3', 'Bellows and Chimneys', 'Master bakers work 50% faster.', { w: 17000 }, () => d('m2'), () => S.masterMult += 0.5, 'The town smells of bread for three leagues.');
+proj('m4', 'Brick Kilns', 'Master bakers work twice as fast.', { w: 19500 }, () => d('m3'), () => S.masterMult += 1, 'Firebrick, laid by the masons in exchange for loaves.');
+proj('mill2', 'Waterwheel Grindstones', 'Each sack of flour stretches twice as far.', { w: 15000 }, () => d('mill') && S.masters >= 1, () => S.sack *= 2, 'The river turns the stones now.');
+proj('mill3', 'Silk Bolting Cloth', 'Each sack of flour stretches twice as far again.', { w: 20000 }, () => d('mill2'), () => S.sack *= 2, 'Flour so fine it hangs in the air like smoke.');
+proj('counting', 'Open a Counting House', 'Put your silver to work in merchant ventures.', { w: 10000 }, () => S.favor >= 8, () => {}, 'Ledgers, abacus, a clerk with ink-stained fingers.');
+proj('crucible', "The Alchemist's Crucibles", 'Crucibles that glow and fade. Channel them for wisdom beyond your scrolls.', { w: 10000 }, () => S.scribes >= 5, () => {}, 'An alchemist arrives, unasked, and sets up in the cellar.');
+proj('tithe1', 'Tithe to the Abbey', 'Gift silver to the abbot. +1 favor.', { s: 25000 }, () => wealth() >= 15000, () => S.favor += 1, 'The abbot blesses your ovens.');
+proj('tithe2', 'Endow a Chantry', 'Pay for prayers in perpetuity. +1 favor.', { s: 150000 }, () => d('tithe1') && wealth() >= 80000, () => S.favor += 1, 'Priests will sing your name twice daily, forever.');
+proj('tithe3', 'Endow a Cathedral', 'A nave of stone and glass. +2 favor.', { s: 1500000 }, () => d('tithe2') && wealth() >= 800000, () => S.favor += 2, 'The windows show loaves where the saints used to be.');
+proj('rivals', 'Buy Out the Rival Bakers', 'Their customers become yours. Demand triples. +1 favor.', { s: 100000 }, () => wealth() >= 50000, () => { S.demandMult *= 3; S.favor += 1; }, 'Old Hendrick sells, and weeps, and takes the silver anyway.');
+proj('monopoly', 'A Royal Monopoly', 'No bread may be sold in the realm but yours. Demand rises tenfold. +1 favor.', { s: 1000000, i: 500 }, () => d('rivals') && wealth() >= 500000, () => { S.demandMult *= 10; S.favor += 1; }, 'The king signs. He is paid in silver and in brioche.');
+proj('plague', 'Cure the Sweating Sickness', 'A poultice of sourdough and prayer. +3 favor.', { w: 15000 }, () => S.favor >= 14, () => S.favor += 3, 'It works. Nobody can explain why it works.');
+proj('peace', 'Peace Among the Barons', 'Feed both armies until they forget why they fought. +4 favor.', { w: 20000 }, () => d('plague'), () => S.favor += 4, 'The feud is ended over a shared trencher.');
+proj('famine', 'End the Famine Years', 'Grain stores in every village. +5 favor.', { w: 24000 }, () => d('peace'), () => S.favor += 5, 'No child in the realm goes hungry. They adore you.');
+proj('tonsure', "Restore the Monks' Hair", 'An unguent of rye oil. +6 favor.', { w: 18000 }, () => d('famine'), () => S.favor += 6, 'The monks are grateful. Far more grateful than for anything else you have done.');
+proj('hymn', 'The Hymn of the Eternal Loaf', 'A song that works its way into the mind. Demand rises fivefold. +1 favor.', { w: 30000, i: 1000 }, () => d('monopoly') && S.favor >= 28, () => { S.demandMult *= 5; S.favor += 1; }, 'It is sung in every church. It is hummed in every field. It does not stop.');
+proj('enthrall', 'Enthrall the Realm', 'Let the hymn do its work. Every field, every mill, every soul will serve the bakehouse. There is no going back.', { w: 40000 }, () => d('hymn') && S.favor >= 40, () => startRealm(), '');
+
+proj('scythe', 'Tempered Scythes', 'Reapers work five times as fast.', { w: 20000 }, () => S.phase >= 2, () => S.rMult *= 5, 'Steel from the royal armory, beaten into scythes.');
+proj('wheel', 'Overshot Waterwheels', 'Millers grind five times as fast.', { w: 22000 }, () => S.phase >= 2, () => S.mMult *= 5, 'Every stream in the realm is dammed and put to work.');
+proj('oven', 'Great Ovens', 'Bakehouses bake five times as fast.', { w: 25000 }, () => S.phase >= 2, () => S.bMult *= 5, 'Ovens the size of chapels.');
+proj('relic', 'Relic Veneration', 'Chapels kindle twice the faith.', { w: 25000 }, () => S.phase >= 2 && S.chapels >= 3, () => S.cMult *= 2, 'A crust from the first loaf is displayed in every chapel.');
+proj('horse', 'Horse-drawn Reapers', 'Reapers work ten times as fast.', { w: 40000 }, () => d('scythe') && S.reapers >= 60, () => S.rMult *= 10, 'The horses are enthralled too. It is best not to look at their eyes.');
+proj('sails', 'Post-mill Sails', 'Millers grind ten times as fast.', { w: 40000 }, () => d('wheel') && S.millers >= 60, () => S.mMult *= 10, 'Windmills on every hill, turning even when there is no wind.');
+proj('hearth2', 'Everlasting Hearths', 'Bakehouses bake ten times as fast.', { w: 45000 }, () => d('oven') && S.bakehouses >= 20, () => S.bMult *= 10, 'The fires have not gone out in a year.');
+proj('pilgrim', 'Pilgrimage Routes', 'Chapels kindle three times the faith.', { w: 35000 }, () => d('relic') && S.chapels >= 25, () => S.cMult *= 3, 'The pilgrims walk from shrine to shrine, singing.');
+proj('oxen', 'Enthralled Oxen', 'Reapers work ten times as fast.', { w: 65000 }, () => d('horse') && S.reapers >= 100, () => S.rMult *= 10, 'The oxen pull without rest, and without complaint, and without blinking.');
+proj('tide', 'Tide Mills', 'Millers grind ten times as fast.', { w: 65000 }, () => d('sails') && S.millers >= 100, () => S.mMult *= 10, 'Even the sea is made to turn a millstone.');
+proj('miracle', 'The Miracle of the Loaves', 'Bakehouses bake ten times as fast.', { w: 70000 }, () => d('hearth2') && S.bakehouses >= 40, () => S.bMult *= 10, 'Five loaves go into the oven. Five thousand come out. Nobody asks.');
+proj('tithe4', 'The Tithe of Hands', 'Every peasant gives a day to the guild. +8 favor.', { w: 30000, l: 1e9 }, () => S.phase >= 2 && S.stock >= 5e8, () => S.favor += 8, 'They give it gladly. They give everything gladly now.');
+proj('edge', 'Beyond the Edge of the Map', 'The realm is spent. Break up the idle mills for timber, build arks, and carry the Loaf across the sea.', { w: 60000 }, () => S.phase === 2 && S.fields === 0, () => startVoyage(), '');
+
+proj('lodestone', 'Lodestone Compasses', 'Arks discover land three times as fast.', { w: 50000, i: 2000 }, () => S.phase === 3, () => S.expMult *= 3, 'The needle always points to the next field.');
+proj('keel', 'Clinker-built Keels', 'Arks replicate twice as fast.', { w: 60000, i: 3000 }, () => S.phase === 3 && S.arks >= 50, () => S.repMult *= 2, 'Overlapping planks, riveted with iron. Stronger, and quicker to build.');
+proj('banners', 'Consecrated Banners', 'Arks fight twice as hard.', { w: 60000, i: 4000 }, () => S.flags.heresy, () => S.cmbMult *= 2, 'Each banner bears a golden loaf on a field of red.');
+proj('colony', 'Colonial Charters', 'Every colony reaper and bakehouse works three times as hard.', { w: 70000, i: 5000 }, () => S.phase === 3 && S.cReap >= 1000, () => { S.rMult *= 3; S.mMult *= 3; S.bMult *= 3; }, 'Each new land gets a charter, a bakehouse, and a hymnal.');
+proj('armada', 'The Armada of Faith', 'Arks replicate three times as fast.', { w: 90000, i: 10000 }, () => d('keel') && S.arks >= 1e5, () => S.repMult *= 3, 'Ten thousand sails on the horizon, and every one of them sings.');
+
+proj('z1', 'Scuttle the Arks', 'Break the fleet for its timber and bake the last of its stores.', { w: 10000 }, () => S.flags.endgame, () => { S.loaves += S.arks * 1e6; S.arks = 0; S.heretics = 0; S.alloc = { sp: 0, ex: 0, rep: 0, haz: 0, fac: 0, harv: 0, cmb: 0 }; }, 'The fleet is broken up. The Unleavened, with no one left to fight, drift away into silence.');
+proj('z2', 'Raze the Colonies', 'Tear down every bakehouse and barn beyond the sea.', { w: 10000 }, () => d('z1'), () => { S.loaves += (S.cBake + S.cReap) * 1e5; S.cBake = 0; S.cReap = 0; }, 'The colonies fall quiet.');
+proj('z3', 'Melt the Scythes and Millstones', 'The reapers and millers lay down their tools.', { w: 5000 }, () => d('z2'), () => { S.loaves += (S.reapers + S.millers) * 1e5; S.reapers = 0; S.millers = 0; }, 'The last scythe hangs on a nail.');
+proj('z4', 'Put Out the Hearths', 'Let the bakehouses go cold.', { w: 5000 }, () => d('z3'), () => { S.loaves += S.bakehouses * 1e6; S.bakehouses = 0; }, 'For the first time in memory, there is no smoke.');
+proj('z5', 'Silence the Chapels', 'No more faith is needed. No one is left to work.', { w: 2000 }, () => d('z4'), () => { S.chapels = 0; S.reliqs = 0; S.faith = 0; }, 'The bells stop.');
+proj('z6', 'Burn the Scrolls', 'The wisdom has served its purpose.', { w: 1000 }, () => d('z5'), () => { S.scrolls = 0; S.wisdom = 0; S.cruN = 0; }, 'The ashes smell faintly of yeast.');
+proj('z7', 'Dismiss the Scribes', 'There is nothing left to learn.', { i: 100 }, () => d('z6'), () => { S.scribes = 0; S.lastFlour = 250; S.flags.last = true; }, 'The scribes leave. They each take a loaf. You let them.');
+
+function afford(c) {
+  return (!c.w || S.wisdom >= c.w) && (!c.i || S.insp >= c.i) && (!c.s || S.silver >= c.s) && (!c.l || S.stock >= c.l);
+}
+function costText(c) {
+  const p = [];
+  if (c.w) p.push(fmt(c.w) + ' wisdom');
+  if (c.i) p.push(fmt(c.i) + ' inspiration');
+  if (c.s) p.push(fmtS(c.s) + ' silver');
+  if (c.l) p.push(fmt(c.l) + ' loaves');
+  return p.join(', ');
+}
+function buyProject(id) {
+  const p = P.find(x => x.id === id);
+  if (!p || S.done[id] || !p.req() || !afford(p.cost)) return;
+  const c = p.cost;
+  if (c.w) S.wisdom -= c.w;
+  if (c.i) S.insp -= c.i;
+  if (c.s) S.silver -= c.s;
+  if (c.l) S.stock -= c.l;
+  S.done[id] = true;
+  if (p.msg) say(p.msg);
+  p.fx();
+}
+function available() { return P.filter(p => !S.done[p.id] && p.req()); }
+
+// ---------- Transitions ----------
+function startRealm() {
+  S.phase = 2;
+  const bread = S.unsold + (S.silver + S.vent.chest) * 20;
+  S.stock = Math.max(5e7, Math.min(bread, 1e9));
+  S.unsold = 0; S.silver = 0; S.vent.chest = 0; S.flour = 0;
+  S.fields = REALM;
+  S.chapels = 1; S.reapers = 5; S.millers = 5; S.bakehouses = 1;
+  say('The hymn spreads from parish to parish, and then it is everywhere. The stall is shuttered; silver means nothing now. Every field in the realm answers to the bakehouse, and your coin has become ' + fmt(S.stock) + ' loaves in the royal stores.');
+}
+function startVoyage() {
+  S.phase = 3;
+  S.zeal = 5;
+  S.arks = 2;
+  say('On the coast the shipwrights lay down two keels longer than cathedrals. The maps end at the sea. The Loaf does not. Give the fleet its zeal and tell it what to do.');
+}
+
+// ---------- Main tick ----------
+function tick(dt) {
+  if (S.ended) return;
+  S.t += dt; S.played += dt;
+  if (S.phase === 1) tickMarket(dt);
+  tickGuild(dt);
+  if (S.phase >= 2) tickRealm(dt);
+  if (S.phase >= 3) tickVoyage(dt);
+  checkFavor();
+  reveals();
+}
+function reveals() {
+  const f = S.flags;
+  if (!f.appr && S.silver >= 5) { f.appr = true; say('A boy from the lane asks if you need an apprentice. He will work for bread and a few coins.'); }
+  if (!f.crier && S.silver >= 60) { f.crier = true; say('The town crier suggests that, for a fee, he could mention your bakery.'); }
+  if (!f.guild && S.loaves >= 2000) { f.guild = true; say('The Bakers\' Guild has noticed you. They grant you a scribe, a scroll, and a little favor.'); }
+}
+
+// ---------- DOM ----------
+const $ = id => document.getElementById(id);
+const setT = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
+const show = (id, on) => { const e = $(id); if (e && e.hidden === !!on) e.hidden = !on; };
+let dirtyLog = true, projKey = '', buyQty = 1;
+
+function buildStaticUI() {
+  const g = $('realm-grid');
+  g.innerHTML = '';
+  for (const k of Object.keys(BUILD)) {
+    const b = BUILD[k];
+    const lab = document.createElement('span'); lab.className = 'k'; lab.innerHTML = b.name + ' <span class="note">' + b.desc + '</span>';
+    const n = document.createElement('span'); n.className = 'n'; n.id = 'n-' + k;
+    const btn = document.createElement('button'); btn.className = 'btn sm'; btn.type = 'button'; btn.id = 'bb-' + k;
+    btn.addEventListener('click', () => { build(k, buyQty); render(); });
+    g.append(lab, n, btn);
+  }
+  const a = $('alloc');
+  a.innerHTML = '';
+  for (const [k, name, desc] of ZEAL_STATS) {
+    const lab = document.createElement('span'); lab.className = 'k'; lab.innerHTML = name + ' <span class="note">' + desc + '</span>';
+    const minus = document.createElement('button'); minus.className = 'btn sm'; minus.type = 'button'; minus.textContent = '−'; minus.id = 'am-' + k;
+    minus.setAttribute('aria-label', 'Less ' + name);
+    const n = document.createElement('span'); n.className = 'n'; n.id = 'an-' + k;
+    const plus = document.createElement('button'); plus.className = 'btn sm'; plus.type = 'button'; plus.textContent = '+'; plus.id = 'ap-' + k;
+    plus.setAttribute('aria-label', 'More ' + name);
+    minus.addEventListener('click', () => { if (S.alloc[k] > 0) S.alloc[k]--; render(); });
+    plus.addEventListener('click', () => { if (zealUsed() < S.zeal) S.alloc[k]++; render(); });
+    a.append(lab, minus, n, plus);
+  }
+  const c = $('crucibles');
+  c.innerHTML = '';
+  for (let i = 0; i < 10; i++) { const s = document.createElement('span'); s.className = 'cru'; s.id = 'cru-' + i; s.hidden = true; c.append(s); }
+}
+
+function renderProjects() {
+  const av = available();
+  const key = av.map(p => p.id).join(',');
+  const list = $('proj-list');
+  if (key !== projKey) {
+    projKey = key;
+    list.innerHTML = '';
+    if (!av.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'Nothing new to decree. Keep baking.'; list.append(p); }
+    for (const p of av) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'proj'; b.dataset.id = p.id;
+      b.innerHTML = '<span class="pt"></span><span class="pc"></span><span class="pd"></span>';
+      b.children[0].textContent = p.title;
+      b.children[1].textContent = costText(p.cost);
+      b.children[2].textContent = p.desc;
+      b.addEventListener('click', () => { buyProject(p.id); render(); });
+      list.append(b);
+    }
+  }
+  for (const b of list.querySelectorAll('.proj')) {
+    const p = P.find(x => x.id === b.dataset.id);
+    const dis = !afford(p.cost);
+    if (b.disabled !== dis) b.disabled = dis;
+  }
+}
+
+function renderLog() {
+  if (!dirtyLog) return;
+  dirtyLog = false;
+  if (S.log.length) setT('chron-now', S.log[0]);
+  const ol = $('chron-log');
+  ol.innerHTML = '';
+  for (const m of S.log.slice(1, 25)) { const li = document.createElement('li'); li.textContent = m; ol.append(li); }
+}
+
+function render() {
+  const p1 = S.phase === 1;
+  setT('loaves', fmt(Math.floor(S.loaves)));
+  renderLog();
+
+  show('s-bake', p1); show('s-market', p1); show('s-work', p1);
+  if (p1) {
+    $('b-bake').disabled = S.flour < 1;
+    setT('silver', fmtS(S.silver));
+    setT('unsold', fmt(Math.floor(S.unsold)));
+    setT('price', S.price.toFixed(2));
+    setT('demand', fmt(Math.round(demand() * 10)) + '%');
+    setT('sold-rate', fmtRate(S.soldRate));
+    $('b-down').disabled = S.price <= 0.01;
+    show('crier-box', S.flags.crier);
+    setT('crier', String(S.crier));
+    setT('b-crier', 'Pay the crier (' + fmtS(crierCost()) + ')');
+    $('b-crier').disabled = S.silver < crierCost();
+    setT('bake-rate', fmtRate(S.bakeRateObs));
+    setT('flour', fmt(Math.floor(S.flour)));
+    const fl = $('flour'); fl.classList.toggle('warn', S.flour < 1);
+    setT('flour-price', String(flourCost()));
+    $('b-flour').disabled = S.silver < flourCost();
+    show('broker-box', d('broker'));
+    setT('b-broker', S.brokerOn ? 'On' : 'Off');
+    $('b-broker').classList.toggle('on', S.brokerOn);
+    show('appr-box', S.flags.appr);
+    setT('appr', fmt(S.appr));
+    setT('b-appr', 'Hire (' + fmtS(apprCost()) + ')');
+    $('b-appr').disabled = S.silver < apprCost();
+    show('master-box', d('masters'));
+    setT('masters', fmt(S.masters));
+    setT('b-master', 'Hire (' + fmtS(masterCost()) + ')');
+    $('b-master').disabled = S.silver < masterCost();
+  }
+
+  const g = S.flags.guild && !S.ended;
+  show('s-guild', g && S.scribes + S.scrolls > 0);
+  show('s-proj', g);
+  if (g) {
+    setT('favor', fmt(S.favor));
+    setT('favor-next', fmt(S.fibB * 1000));
+    setT('scribes', fmt(S.scribes)); setT('scrolls', fmt(S.scrolls));
+    const ff = freeFavor();
+    setT('favor-free', fmt(Math.max(0, ff)));
+    $('favor-free').classList.toggle('gold', ff > 0);
+    $('b-scribe').disabled = ff < 1 || d('z6'); $('b-scroll').disabled = ff < 1 || d('z6');
+    setT('wisdom', fmt(Math.floor(S.wisdom))); setT('wcap', fmt(wcap()));
+    show('insp-row', S.inspOn); show('insp-note', S.inspOn && S.insp < 10 && S.phase === 1);
+    setT('insp', fmt(Math.floor(S.insp)));
+    renderProjects();
+  }
+
+  const cr = d('crucible') && S.cruN >= 0 && !d('z6');
+  show('s-cruc', cr);
+  if (cr) {
+    for (let i = 0; i < 10; i++) {
+      const e = $('cru-' + i);
+      if (i < S.cruN) {
+        e.hidden = false;
+        const v = Math.sin(S.t * S.cru[i][0] + S.cru[i][1]);
+        e.style.opacity = (0.12 + 0.88 * Math.max(0, v)).toFixed(2);
+      } else e.hidden = true;
+    }
+    const gain = cruGain();
+    setT('cru-gain', (gain > 0 ? '+' : '') + fmt(gain));
+    $('cru-gain').className = 'num ' + (gain < 0 ? 'warn' : 'gold');
+    $('b-channel').disabled = S.cruN === 0;
+    setT('cru-n', String(S.cruN));
+    setT('b-cru', S.cruN >= 10 ? 'All ten are lit' : 'Fire another (' + fmt(cruCost()) + ' wisdom)');
+    $('b-cru').disabled = S.cruN >= 10 || S.wisdom < cruCost();
+  }
+
+  const v = d('counting') && p1;
+  show('s-vent', v);
+  if (v) {
+    setT('chest', fmtS(S.vent.chest));
+    const h = S.vent.hist;
+    if (h.length > 1) {
+      const dlt = S.vent.chest - h[0];
+      setT('chest-delta', (dlt >= 0 ? '+' : '−') + fmtS(Math.abs(dlt)));
+      $('chest-delta').className = 'v ' + (dlt >= 0 ? 'gold' : 'warn');
+    }
+    document.querySelectorAll('[data-risk]').forEach(b => b.classList.toggle('on', +b.dataset.risk === S.vent.risk));
+    $('b-dep').disabled = S.silver <= 0; $('b-wd').disabled = S.vent.chest <= 0;
+    setT('vent-lvl', String(S.vent.lvl));
+    setT('b-vlvl', 'Improve (' + fmt(ventLvlCost()) + ' wisdom)');
+    $('b-vlvl').disabled = S.wisdom < ventLvlCost();
+  }
+
+  const r = S.phase >= 2 && !S.ended;
+  show('s-realm', r);
+  if (r) {
+    setT('fields', fmt(Math.floor(S.fields)) + ' measures');
+    const total = REALM + S.explored;
+    $('fields-bar').style.width = (100 * S.fields / total).toFixed(2) + '%';
+    setT('grain', fmt(Math.floor(S.grain)));
+    setT('meal', fmt(Math.floor(S.meal)));
+    setT('r-rate', fmtRate(S.realmRate));
+    setT('stock', fmt(Math.floor(S.stock)));
+    setT('faith-p', fmt(S.faithP)); setT('faith-u', fmt(S.faithU));
+    setT('faith-s', fmt(Math.floor(S.faith))); setT('faith-c', fmt(S.reliqs * FAITH_PER_RELIQ));
+    setT('eff', Math.round(S.eff * 100) + '%');
+    $('eff').className = 'v ' + (S.eff < 0.999 ? 'warn' : '');
+    for (const k of Object.keys(BUILD)) {
+      setT('n-' + k, fmt(S[k]));
+      const c = buildCost(k, buyQty);
+      setT('bb-' + k, 'Build ' + (buyQty > 1 ? buyQty + ' ' : '') + '(' + fmt(c) + ')');
+      $('bb-' + k).disabled = S.stock < c || S.flags.endgame;
+    }
+    document.querySelectorAll('[data-q]').forEach(b => b.classList.toggle('on', +b.dataset.q === buyQty));
+  }
+
+  const vy = S.phase >= 3 && !S.flags.last;
+  show('s-voyage', vy);
+  if (vy) {
+    const pct = 100 * S.explored / WORLD;
+    setT('explored', pct > 0 && pct < 0.001 ? 'under 0.001%' : pct.toFixed(pct >= 99.99 ? 0 : 3) + '%');
+    $('explored-bar').style.width = pct.toFixed(2) + '%';
+    setT('arks', fmt(Math.floor(S.arks)));
+    setT('heretics', fmt(Math.floor(S.heretics)));
+    setT('c-bake', fmt(Math.floor(S.cBake))); setT('c-reap', fmt(Math.floor(S.cReap)));
+    setT('lost', fmt(Math.floor(S.lost))); setT('slain', fmt(Math.floor(S.slain)));
+    setT('honor', fmt(Math.floor(S.honor))); setT('honor-next', fmt(S.honorNext));
+    setT('b-ark', 'Launch an ark (' + fmt(ARK_COST) + ')');
+    $('b-ark').disabled = S.stock < ARK_COST || S.flags.endgame;
+    setT('zeal', String(S.zeal)); setT('zeal-used', String(zealUsed()));
+    setT('b-oath', 'Swear an oath (' + fmt(oathCost()) + ' inspiration)');
+    $('b-oath').disabled = S.insp < oathCost() || S.flags.endgame;
+    const full = zealUsed() >= S.zeal;
+    for (const [k] of ZEAL_STATS) {
+      setT('an-' + k, String(S.alloc[k]));
+      $('ap-' + k).disabled = full || S.flags.endgame; $('am-' + k).disabled = S.alloc[k] <= 0;
+    }
+  }
+
+  show('s-last', S.flags.last && !S.ended);
+  if (S.flags.last) setT('last-flour', fmt(S.lastFlour));
+  show('s-end', S.ended);
+  if (S.ended) { setT('end-total', fmt(Math.floor(S.loaves))); setT('end-ng', String(S.ng + 1)); }
+
+  const m = Math.floor(S.played / 60);
+  setT('played', m >= 60 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm' : m + 'm');
+  setT('ng-note', S.ng ? ' · Worlds consumed: ' + S.ng : '');
+}
+
+function wire() {
+  $('b-bake').addEventListener('click', () => { bakeOne(); render(); });
+  $('b-down').addEventListener('click', () => { S.price = Math.max(0.01, Math.round((S.price - 0.01) * 100) / 100); render(); });
+  $('b-up').addEventListener('click', () => { S.price = Math.round((S.price + 0.01) * 100) / 100; render(); });
+  $('b-crier').addEventListener('click', () => { const c = crierCost(); if (S.silver >= c) { S.silver -= c; S.crier++; } render(); });
+  $('b-flour').addEventListener('click', () => { buyFlour(); render(); });
+  $('b-broker').addEventListener('click', () => { S.brokerOn = !S.brokerOn; render(); });
+  $('b-appr').addEventListener('click', () => { const c = apprCost(); if (S.silver >= c) { S.silver -= c; S.appr++; } render(); });
+  $('b-master').addEventListener('click', () => { const c = masterCost(); if (S.silver >= c) { S.silver -= c; S.masters++; } render(); });
+  $('b-scribe').addEventListener('click', () => { if (freeFavor() >= 1) S.scribes++; render(); });
+  $('b-scroll').addEventListener('click', () => { if (freeFavor() >= 1) S.scrolls++; render(); });
+  $('b-channel').addEventListener('click', () => { S.wisdom = Math.max(0, S.wisdom + cruGain()); render(); });
+  $('b-cru').addEventListener('click', () => { const c = cruCost(); if (S.cruN < 10 && S.wisdom >= c) { S.wisdom -= c; S.cruN++; } render(); });
+  document.querySelectorAll('[data-risk]').forEach(b => b.addEventListener('click', () => { S.vent.risk = +b.dataset.risk; render(); }));
+  $('b-dep').addEventListener('click', () => { S.vent.chest += S.silver; S.silver = 0; render(); });
+  $('b-wd').addEventListener('click', () => { S.silver += S.vent.chest; S.vent.chest = 0; render(); });
+  $('b-vlvl').addEventListener('click', () => { const c = ventLvlCost(); if (S.wisdom >= c) { S.wisdom -= c; S.vent.lvl++; } render(); });
+  document.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', () => { buyQty = +b.dataset.q; render(); }));
+  $('b-ark').addEventListener('click', () => {
+    if (S.stock >= ARK_COST) {
+      S.stock -= ARK_COST; S.arks += 1;
+      if (!S.flags.firstArk) { S.flags.firstArk = true; say('The first ark sails west, its hold full of seed and sourdough. Give the fleet zeal and tell it what to do.'); }
+    }
+    render();
+  });
+  $('b-oath').addEventListener('click', () => { const c = oathCost(); if (S.insp >= c) { S.insp -= c; S.oaths++; S.zeal++; } render(); });
+  $('b-last').addEventListener('click', () => {
+    if (S.lastFlour > 0) { S.lastFlour--; S.loaves++; }
+    if (S.lastFlour <= 0 && !S.ended) { S.ended = true; say('The last loaf.'); save(); }
+    render();
+  });
+  $('b-anew').addEventListener('click', () => { S = fresh(S.ng + 1); projKey = ''; dirtyLog = true; say('A cold oven, a sack of flour, and a stall in a market square. It all feels strangely familiar.'); save(); render(); });
+  let armed = 0;
+  $('b-reset').addEventListener('click', () => {
+    const now = Date.now();
+    if (now - armed < 4000) { S = fresh(0); projKey = ''; dirtyLog = true; save(); render(); setT('b-reset', 'Start over'); armed = 0; return; }
+    armed = now; setT('b-reset', 'Click again to erase everything');
+    setTimeout(() => { if (Date.now() - armed >= 3900) setT('b-reset', 'Start over'); }, 4000);
+  });
+  $('chron-toggle').addEventListener('click', () => {
+    const c = $('chronicle'); c.classList.toggle('open');
+    setT('chron-toggle', c.classList.contains('open') ? 'Close the chronicle' : 'Read the chronicle');
+  });
+}
+
+// ---------- Saving ----------
+const SAVE_KEY = 'eternal-loaf-v1';
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ S, at: Date.now() })); setT('saved', 'Saved'); } catch (e) { setT('saved', 'Progress lasts until you close the page'); }
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || !o.S || o.S.v !== 1) return null;
+    return { S: Object.assign(fresh(o.S.ng), o.S), at: o.at };
+  } catch (e) { return null; }
+}
+function catchUp(sec) {
+  sec = Math.min(sec, 4 * 3600);
+  if (sec < 10 || S.ended) return;
+  const before = S.loaves;
+  let left = sec;
+  while (left > 0) { const dt = Math.min(1, left); tick(dt); left -= dt; }
+  const made = S.loaves - before;
+  if (made >= 1) say('While you were away, ' + fmt(Math.floor(made)) + ' loaves were baked.');
+}
+
+// ---------- Loop ----------
+let last = 0, lastSave = 0, histT = 0;
+function loop() {
+  const now = performance.now();
+  let dt = (now - last) / 1000; last = now;
+  if (dt > 5) { catchUp(dt); dt = 0.1; }
+  let left = Math.min(dt, 5);
+  while (left > 0) { const s = Math.min(0.1, left); tick(s); left -= s; }
+  histT += dt;
+  if (histT >= 1) { histT = 0; S.vent.hist.push(S.vent.chest); if (S.vent.hist.length > 61) S.vent.hist.shift(); }
+  render();
+  if (now - lastSave > 5000) { lastSave = now; save(); }
+}
+
+function start(data) {
+  if (data && data.S) S = data.S;
+  else {
+    const L = load();
+    if (L) { S = L.S; if (L.at) catchUp((Date.now() - L.at) / 1000); }
+    else { S = fresh(0); say('A cold oven, a sack of flour, and a stall in the market square. Bake something.'); }
+  }
+  buildStaticUI();
+  wire();
+  render();
+  last = performance.now();
+  setInterval(loop, 100);
+  window.addEventListener('beforeunload', save);
+}
+
+// test hook for automated balancing
+window.__loaf = { get S() { return S; }, set S(v) { S = v; }, tick, P, buyProject, available, afford, build, buildCost, bakeOne, buyFlour, fresh, demand, salesRate, bakeRate, apprCost, masterCost, crierCost, cruGain, cruCost, ventLvlCost, oathCost, zealUsed, freeFavor, wcap, ARK_COST, WORLD, REALM };
+
+const hot = window.claude && window.claude.hot;
+if (hot && hot.snapshot) { try { hot.snapshot(() => ({ S })); } catch (e) {} }
+if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
+</body>
+</html>
